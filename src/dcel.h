@@ -21,4 +21,6 @@ private:
   std::vector<Face> faces;
   std::vector<HalfEdge> edges;
   std::vector<Vertex> vertices;
+
+  void mergeDCEL(DCEL s1, DCEL s2);
 };

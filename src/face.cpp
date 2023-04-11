@@ -1,6 +1,10 @@
 #include "face.h"
+#include <vector>
 
-Face::Face() {}
+Face::Face() {
+  this->outer = 0;
+  this->inner = std::vector<HalfEdge *>();
+}
 
 Face::~Face() {
   delete this->outer;
