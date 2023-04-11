@@ -9,8 +9,8 @@ Vertex::Vertex() {
 
 Vertex::~Vertex() { delete this->incident; }
 
-int Vertex::getX() { return this->x; }
+long long int Vertex::getX() const { return this->x; }
 
-int Vertex::getY() { return this->y; }
+long long int Vertex::getY() const { return this->y; }
 
 HalfEdge *Vertex::getIncident() { return this->incident; }

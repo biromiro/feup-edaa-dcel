@@ -11,11 +11,11 @@ public:
   Vertex &operator=(const Vertex &) = default;
   ~Vertex();
 
-  int getX();
-  int getY();
+  [[nodiscard]] long long int getX() const;
+  [[nodiscard]] long long int getY() const;
   HalfEdge *getIncident();
 
 private:
-  int x, y;
+  long long int x, y;
   HalfEdge *incident;
 };
