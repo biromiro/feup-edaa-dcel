@@ -1,6 +1,7 @@
 #pragma once
 
-#include "half_edge.h"
+class HalfEdge;
+
 class Vertex {
 public:
   Vertex();

@@ -2,4 +2,10 @@
 
 HalfEdge::HalfEdge() {}
 
-HalfEdge::~HalfEdge() {}
+HalfEdge::~HalfEdge() {
+  delete this->incident;
+  delete this->next;
+  delete this->prev;
+  delete this->twin;
+  delete this->origin;
+}

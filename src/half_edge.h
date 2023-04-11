@@ -1,5 +1,8 @@
 #pragma once
 
+#include "face.h"
+#include "vertex.h"
+
 class HalfEdge {
 public:
   HalfEdge();
@@ -10,4 +13,9 @@ public:
   ~HalfEdge();
 
 private:
+  Vertex *origin;
+  HalfEdge *twin;
+  HalfEdge *next;
+  HalfEdge *prev;
+  Face *incident;
 };
