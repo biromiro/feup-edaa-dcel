@@ -1,6 +1,6 @@
 #pragma once
 
-#include "edge.h"
+#include "half_edge.h"
 class Vertex {
 public:
   Vertex();
@@ -12,9 +12,9 @@ public:
 
   int getX();
   int getY();
-  Edge *getIncident();
+  HalfEdge *getIncident();
 
 private:
   int x, y;
-  Edge *incident;
+  HalfEdge *incident;
 };
