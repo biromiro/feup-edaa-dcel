@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "/home/krypt0/Desktop/1.Projects/edaa/proj-2/build/CMakePresets.json"
+    ]
+}
