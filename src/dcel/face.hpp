@@ -2,6 +2,7 @@
 
 #include "vertex.hpp"
 #include <vector>
+#include <set>
 
 template <class T>
 class Face {
@@ -19,6 +20,6 @@ public:
   };
 
 private:
-  HalfEdge<T> *outer;
-  std::vector<HalfEdge<T> *> inner;
+  std::shared_ptr<HalfEdge<T>> outer;
+  std::set<std::shared_ptr<HalfEdge<T>>> inner;
 };

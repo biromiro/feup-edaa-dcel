@@ -20,5 +20,5 @@ public:
 
 private:
   T value;
-  HalfEdge<T> *incident;
+  std::shared_ptr<HalfEdge<T>> incident;
 };
