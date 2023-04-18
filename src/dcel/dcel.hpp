@@ -1,3 +1,4 @@
+// Copyright 2023 EDAA Group C
 #pragma once
 
 #include "face.hpp"
@@ -21,7 +22,6 @@ public:
     DCEL(const DCEL<T> &) = default;
     DCEL &operator=(DCEL<T> &&) = default;
     DCEL &operator=(const DCEL<T> &) = default;
-    ~DCEL();
 
     std::set<std::shared_ptr<Face<T>>> getFaces() { return this->edges; };
     std::set<std::shared_ptr<HalfEdge<T>>> getEdges() { return this->faces; };

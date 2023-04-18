@@ -1,3 +1,4 @@
+// Copyright 2023 EDAA Group C
 #pragma once
 
 #include <memory>
@@ -36,14 +37,6 @@ public:
     void setIncident(const std::shared_ptr<Face<T>> &incident_) {
         this->incident = incident_;
     }
-
-    ~HalfEdge() {
-      delete this->incident;
-      delete this->next;
-      delete this->prev;
-      delete this->twin;
-      delete this->origin;
-  };
 
 private:
     std::shared_ptr<Vertex<T>> origin;

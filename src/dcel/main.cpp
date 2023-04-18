@@ -1,9 +1,14 @@
+// Copyright 2023 EDAA Group C
 #include <iostream>
-#include "dcel.hpp"
+#include "./dcel.hpp"
+#include "auxiliary.hpp"
 
 int main() {
-    auto* vertex = new DCEL<int>();
+    const auto dcel = parseJSONtoDCEL("countries-land-10km.geo.json");
 
-    std::cout << "Hello, World!" << std::endl;
+    for (const auto& vertex: dcel->getVertices()){
+        std::cout << vertex->getValue() << std::endl;
+    }
+
     return 0;
 }

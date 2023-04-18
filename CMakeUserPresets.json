@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "C:\\Users\\nrtc\\OneDrive\\Ambiente de Trabalho\\feup-edaa-dcel\\build\\CMakePresets.json"
+    ]
+}

@@ -1,24 +1,24 @@
+// Copyright 2023 EDAA Group C
 #pragma once
 
-#include "half_edge.hpp"
+#include <memory>
+
+#include "./half_edge.hpp"
 
 template <class T>
 class Vertex {
-public:
-  Vertex(T value): incident() {
-      this->value = value;
-  };
+ public:
+    explicit Vertex(T value) : incident(), value(value) {}
 
-  Vertex(Vertex &&) = default;
-  Vertex(const Vertex &) = default;
-  Vertex &operator=(Vertex &&) = default;
-  Vertex &operator=(const Vertex &) = default;
-  ~Vertex() { delete this->incident; };
+    Vertex(Vertex &&)  noexcept = default;
+    Vertex(const Vertex &) = default;
+    Vertex &operator=(Vertex &&) = default;
+    Vertex &operator=(const Vertex &) = default;
 
-  [[nodiscard]] T getValue() const { return this->value; };
-  HalfEdge<T> *getIncident() { return this->incident; };
+    [[nodiscard]] T getValue() const { return this->value; }
+    std::shared_ptr<HalfEdge<T>> getIncident() { return this->incident; }
 
-private:
+ private:
   T value;
   std::shared_ptr<HalfEdge<T>> incident;
 };

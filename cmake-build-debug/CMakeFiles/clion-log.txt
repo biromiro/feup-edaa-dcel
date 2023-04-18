@@ -1,0 +1,20 @@
+C:\Users\nrtc\AppData\Local\JetBrains\Toolbox\apps\CLion\ch-0\222.4167.35\bin\cmake\win\bin\cmake.exe -DCMAKE_BUILD_TYPE=Debug -DCMAKE_MAKE_PROGRAM=C:/Users/nrtc/AppData/Local/JetBrains/Toolbox/apps/CLion/ch-0/222.4167.35/bin/ninja/win/ninja.exe -G Ninja -S "C:\Users\nrtc\OneDrive\Ambiente de Trabalho\feup-edaa-dcel" -B "C:\Users\nrtc\OneDrive\Ambiente de Trabalho\feup-edaa-dcel\cmake-build-debug"
+CMake Error at CMakeLists.txt:4 (find_package):
+  By not providing "Findnlohmann_json.cmake" in CMAKE_MODULE_PATH this
+  project has asked CMake to find a package configuration file provided by
+  "nlohmann_json", but CMake did not find one.
+
+  Could not find a package configuration file provided by "nlohmann_json"
+  with any of the following names:
+
+    nlohmann_jsonConfig.cmake
+    nlohmann_json-config.cmake
+
+  Add the installation prefix of "nlohmann_json" to CMAKE_PREFIX_PATH or set
+  "nlohmann_json_DIR" to a directory containing one of the above files.  If
+  "nlohmann_json" provides a separate development package or SDK, be sure it
+  has been installed.
+
+
+-- Configuring incomplete, errors occurred!
+See also "C:/Users/nrtc/OneDrive/Ambiente de Trabalho/feup-edaa-dcel/cmake-build-debug/CMakeFiles/CMakeOutput.log".
