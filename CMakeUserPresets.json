@@ -1,9 +1,0 @@
-{
-    "version": 4,
-    "vendor": {
-        "conan": {}
-    },
-    "include": [
-        "/home/margarida/Documents/m.eic/edaa/feup-edaa-dcel/build/CMakePresets.json"
-    ]
-}
