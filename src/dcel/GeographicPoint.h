@@ -2,13 +2,18 @@
 #define DCEL_GEOGRAPHICPOINT_H
 
 
+#include <ostream>
+
 class GeographicPoint {
-    GeographicPoint(long lat_, long long_);
+public:
+    GeographicPoint(double lat_, double long_);
+
+    friend std::ostream &operator<<(std::ostream &os, const GeographicPoint &point);
 
 private:
 
-    long latitude;
-    long longitude;
+    double latitude;
+    double longitude;
 };
 
 

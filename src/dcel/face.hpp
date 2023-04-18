@@ -2,6 +2,7 @@
 #pragma once
 
 #include <vector>
+#include <set>
 
 #include "./vertex.hpp"
 
@@ -14,14 +15,7 @@ class Face {
   Face<T> &operator=(Face<T> &&) = default;
   Face<T> &operator=(const Face<T> &) = default;
 
-  ~Face() {
-    delete this->outer;
-    for (auto edge : this->inner) {
-      delete edge;
-    }
-  }
-
- private:
-  HalfEdge<T> *outer;
-  std::vector<HalfEdge<T> *> inner;
+private:
+  std::shared_ptr<HalfEdge<T>> outer;
+  std::set<std::shared_ptr<HalfEdge<T>>> inner;
 };

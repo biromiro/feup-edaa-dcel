@@ -4,4 +4,9 @@
 
 #include "GeographicPoint.h"
 
-GeographicPoint::GeographicPoint(long lat_, long long_) : latitude(lat_), longitude(long_) {}
+GeographicPoint::GeographicPoint(double lat_, double long_) : latitude(lat_), longitude(long_) {}
+
+std::ostream &operator<<(std::ostream &os, const GeographicPoint &point) {
+    os << "latitude: " << point.latitude << " longitude: " << point.longitude;
+    return os;
+}

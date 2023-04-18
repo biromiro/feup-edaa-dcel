@@ -5,5 +5,5 @@ find_package(nlohmann_json REQUIRED)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(${PROJECT_NAME} src/dcel/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE nlohmann_json::nlohmann_json)
+add_executable(${PROJECT_NAME} src/dcel/main.cpp src/dcel/GeographicPoint.cpp src/dcel/auxiliary.hpp)
+target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)

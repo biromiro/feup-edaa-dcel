@@ -1,6 +1,8 @@
 // Copyright 2023 EDAA Group C
 #pragma once
 
+#include <memory>
+
 template <class T>
 class Vertex;
 
@@ -9,24 +11,37 @@ class Face;
 
 template <class T>
 class HalfEdge {
- public:
-  HalfEdge() : incident(), next(), prev(), twin(), origin() {}
-  HalfEdge(HalfEdge &&) = default;
-  HalfEdge(const HalfEdge &) = default;
-  HalfEdge &operator=(HalfEdge &&) = default;
-  HalfEdge &operator=(const HalfEdge &) = default;
-  ~HalfEdge() {
-    delete this->incident;
-    delete this->next;
-    delete this->prev;
-    delete this->twin;
-    delete this->origin;
-  }
+public:
+    HalfEdge(): incident(), next(), prev(), twin(), origin() {};
+    HalfEdge(HalfEdge &&) = default;
+    HalfEdge(const HalfEdge &) = default;
+    HalfEdge &operator=(HalfEdge &&) = default;
+    HalfEdge &operator=(const HalfEdge &) = default;
 
- private:
-  Vertex<T> *origin;
-  HalfEdge<T> *twin;
-  HalfEdge<T> *next;
-  HalfEdge<T> *prev;
-  Face<T> *incident;
+    void setOrigin(const std::shared_ptr<Vertex<T>> &origin_) {
+        this->origin = origin_;
+    }
+
+    void setTwin(const std::shared_ptr<HalfEdge<T>> &twin_) {
+        this->twin = twin_;
+    }
+
+    void setNext(const std::shared_ptr<HalfEdge<T>> &next_) {
+        this->next = next_;
+    }
+
+    void setPrev(const std::shared_ptr<HalfEdge<T>> &prev_) {
+        this->prev = prev_;
+    }
+
+    void setIncident(const std::shared_ptr<Face<T>> &incident_) {
+        this->incident = incident_;
+    }
+
+private:
+    std::shared_ptr<Vertex<T>> origin;
+    std::shared_ptr<HalfEdge<T>> twin;
+    std::shared_ptr<HalfEdge<T>> next;
+    std::shared_ptr<HalfEdge<T>> prev;
+    std::shared_ptr<Face<T>> incident;
 };

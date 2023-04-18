@@ -3,7 +3,10 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/feup-edaa-dcel.iml" filepath="$PROJECT_DIR$/.idea/feup-edaa-dcel.iml" />
+<<<<<<< HEAD
       <module fileurl="file://$PROJECT_DIR$/.idea/feup-edaa-dcel2.iml" filepath="$PROJECT_DIR$/.idea/feup-edaa-dcel2.iml" />
+=======
+>>>>>>> refs/remotes/origin/main
     </modules>
   </component>
 </project>

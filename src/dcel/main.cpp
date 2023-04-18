@@ -1,19 +1,14 @@
 // Copyright 2023 EDAA Group C
-#include <fstream>
 #include <iostream>
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
-
 #include "./dcel.hpp"
+#include "auxiliary.hpp"
 
 int main() {
-  const auto* dcel = new DCEL<int>();
+        const auto dcel = parseJSONtoDCEL("countries-land-10km.geo.json");
 
-  std::ifstream f("../example.json");
-  json data = json::parse(f);
+    for (const auto& vertex: dcel->getVertices()){
+        std::cout << vertex->getValue() << std::endl;
+    }
 
-  std::cout << data["happy"] << std::endl;
-
-  std::cout << "Hello, World!" << std::endl;
-  return 0;
+    return 0;
 }
