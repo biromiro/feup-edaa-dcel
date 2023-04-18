@@ -4,6 +4,6 @@
         "conan": {}
     },
     "include": [
-        "/home/krypt0/Desktop/1.Projects/edaa/proj-2/build/CMakePresets.json"
+        "/home/margarida/Documents/m.eic/edaa/feup-edaa-dcel/build/CMakePresets.json"
     ]
 }

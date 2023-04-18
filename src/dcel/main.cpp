@@ -9,7 +9,7 @@ using json = nlohmann::json;
 int main() {
   const auto* dcel = new DCEL<int>();
 
-  std::ifstream f("example.json");
+  std::ifstream f("../example.json");
   json data = json::parse(f);
 
   std::cout << data["happy"] << std::endl;
