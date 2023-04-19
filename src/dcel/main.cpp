@@ -4,10 +4,10 @@
 #include "auxiliary.hpp"
 
 int main() {
-        const auto dcel = parseJSONtoDCEL("countries-land-10km.geo.json");
+    const auto dcel = parseJSONtoDCEL("countries-land-10km.geo.json");
 
-    for (const auto& vertex: dcel->getVertices()){
-        std::cout << vertex->getValue() << std::endl;
+    for (const auto& face: dcel->getFaces()){
+        std::cout << face->getProperty() << std::endl;
     }
 
     return 0;

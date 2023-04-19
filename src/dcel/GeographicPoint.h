@@ -10,6 +10,22 @@ public:
 
     friend std::ostream &operator<<(std::ostream &os, const GeographicPoint &point);
 
+    bool operator==(const GeographicPoint &rhs) const;
+
+    bool operator!=(const GeographicPoint &rhs) const;
+
+    bool operator<(const GeographicPoint &rhs) const;
+
+    bool operator>(const GeographicPoint &rhs) const;
+
+    bool operator<=(const GeographicPoint &rhs) const;
+
+    double getLatitude() const;
+
+    double getLongitude() const;
+
+    bool operator>=(const GeographicPoint &rhs) const;
+
 private:
 
     double latitude;

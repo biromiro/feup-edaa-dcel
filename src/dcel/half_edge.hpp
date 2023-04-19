@@ -38,6 +38,26 @@ public:
         this->incident = incident_;
     }
 
+    const std::shared_ptr<Vertex<T>> &getOrigin() const {
+        return origin;
+    }
+
+    const std::shared_ptr<HalfEdge<T>> &getTwin() const {
+        return twin;
+    }
+
+    const std::shared_ptr<HalfEdge<T>> &getNext() const {
+        return next;
+    }
+
+    const std::shared_ptr<HalfEdge<T>> &getPrev() const {
+        return prev;
+    }
+
+    const std::shared_ptr<Face<T>> &getIncident() const {
+        return incident;
+    }
+
 private:
     std::shared_ptr<Vertex<T>> origin;
     std::shared_ptr<HalfEdge<T>> twin;
