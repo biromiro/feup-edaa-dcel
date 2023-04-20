@@ -16,122 +16,107 @@
 
 using json = nlohmann::json;
 
-std::shared_ptr<HalfEdge<GeographicPoint>> genGeographicPoints(const std::shared_ptr<DCEL<GeographicPoint>>& dcel,
+bool isClockwise(const std::vector<std::shared_ptr<Vertex<GeographicPoint>>>& vertices) {
+    double accumulator = 0;
+    for (auto i=0; i < vertices.size(); i++) {
+        auto currentPoint = vertices.at(i)->getValue();
+        auto nextPoint = vertices.at((i + 1) % vertices.size())->getValue();
+
+        accumulator +=
+                (nextPoint.getLatitude() - currentPoint.getLatitude())
+                *
+                (nextPoint.getLongitude() + currentPoint.getLongitude());
+
+    }
+    return accumulator > 0;
+}
+
+std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> genGeographicPoints(const std::shared_ptr<DCEL<GeographicPoint>>& dcel,
                                                                const json& json_file) {
 
-    std::shared_ptr<HalfEdge<GeographicPoint>>  edgeOfFace = nullptr;
-
-    std::vector<std::pair<bool, std::shared_ptr<Vertex<GeographicPoint>>>> vertices; // vector of pairs <existed, vertex>
-    std::vector<std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared_ptr<HalfEdge<GeographicPoint>>>> halfEdges;
-
-    GeographicPoint firstGeoPoint = GeographicPoint(0,0);
-    bool first = true;
+    std::vector<std::shared_ptr<Vertex<GeographicPoint>>> vertices;
+    std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> halfEdges, halfEdges2;
 
     for (auto coords : json_file[0]) {
         double latitude = coords[0], longitude = coords[1];
 
         auto geoPoint = GeographicPoint(latitude, longitude);
-        if (first){
-            firstGeoPoint = geoPoint;
-            first = false;
-        } else if (geoPoint == firstGeoPoint) {
-            break;
-        }
-
         auto vertex = dcel->getVertex(geoPoint);
 
         if ( vertex == nullptr) {
             vertex = std::make_shared<Vertex<GeographicPoint>>(geoPoint);
             dcel->addVertex(vertex);
-            vertices.emplace_back(false, vertex);
-        } else vertices.emplace_back(true, vertex);
-
+            vertices.emplace_back(vertex);
+        } else vertices.emplace_back(vertex);
     }
 
-    for (auto i = 0; i < vertices.size(); i++) {
-        auto& [existed1, currentVertex] = vertices.at(i);
-        auto& [existed2, nextVertex] = vertices.at((i + 1) % vertices.size());
+    if (isClockwise(vertices))
+        std::reverse(vertices.begin(), vertices.end());
 
-        std::shared_ptr<HalfEdge<GeographicPoint>> halfEdge1, halfEdge2;
+    for (auto i=0; i < vertices.size(); i++) {
+        auto& currentVertex = vertices.at(i);
+        auto& nextVertex = vertices.at((i+1)%vertices.size());
 
-        if (existed1 && existed2){
-            halfEdge1 = dcel->getHalfEdge(currentVertex, nextVertex);
-            halfEdge2 = dcel->getHalfEdge(nextVertex, currentVertex);
+        auto halfEdge1 = dcel->getHalfEdge(currentVertex, nextVertex);
+        auto halfEdge2 = dcel->getHalfEdge(nextVertex, currentVertex);
 
-            if (halfEdge1) {
-                halfEdges.emplace_back(halfEdge1, halfEdge2);
-                continue;
-            }
+        if (!halfEdge1 && !halfEdge2) {
+            halfEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(currentVertex);
+            halfEdge2 = std::make_shared<HalfEdge<GeographicPoint>>(nextVertex);
 
-            existed1 = false;
-            existed2 = false;
+            dcel->addEdge(halfEdge1);
+            dcel->addEdge(halfEdge2);
+
+            halfEdge1->setTwin(halfEdge2);
+            halfEdge2->setTwin(halfEdge1);
+
+        } else if (!halfEdge1 || !halfEdge2)
+            throw std::invalid_argument("Edges should've been created already.");
+
+        halfEdges.push_back(halfEdge1);
+        halfEdges2.push_back(halfEdge2);
+    }
+
+    for (auto i = 0; i < halfEdges.size(); i++) {
+        auto edge1 = halfEdges.at(i);
+        auto edge2 = halfEdges.at((i+1)%halfEdges.size());
+        auto edge3 = halfEdges.at((i+2)%halfEdges.size());
+
+        if (edge2->getNext()) {
+            edge2->getPrev()->setNext(edge1->getTwin());
+            edge2->getNext()->setPrev(edge3->getTwin());
         }
 
-        halfEdge1 = std::make_shared<HalfEdge<GeographicPoint>>();
-        halfEdge2 = std::make_shared<HalfEdge<GeographicPoint>>();
+        edge2->setNext(edge3);
+        edge2->setPrev(edge1);
 
-        dcel->addEdge(halfEdge1);
-        dcel->addEdge(halfEdge2);
-
-        halfEdge1->setOrigin(currentVertex);
-        halfEdge2->setOrigin(nextVertex);
-
-        halfEdge1->setTwin(halfEdge2);
-        halfEdge2->setTwin(halfEdge1);
-
-        halfEdges.emplace_back(halfEdge1, halfEdge2);
     }
 
-    for (auto i=0; i < halfEdges.size(); i++) {
+    for (auto i = 0; i < halfEdges.size(); i++) {
+        auto edge1 = halfEdges.at(i);
+        auto edge2 = halfEdges.at((i+1)%halfEdges.size());
+        auto edge3 = halfEdges.at((i+2)%halfEdges.size());
 
-        auto& [previousHalfEdge1, previousHalfEdge2] = halfEdges.at(i);
-        auto& [halfEdge1, halfEdge2] = halfEdges.at((i + 1) % halfEdges.size());
-        auto& [nextHalfEdge1, nextHalfEdge2] = halfEdges.at((i + 2) % halfEdges.size());
-
-        auto& [existed1, currentVertex] = vertices.at((i + 1) % vertices.size());
-        auto& [existed2, nextVertex] = vertices.at((i + 2) % vertices.size());
-
-        if (!currentVertex->getIncident())
-            currentVertex->setIncident(halfEdge1);
-
-        if (existed1 && existed2) {
-            if (halfEdge1->getIncident()) {
-                halfEdge2->setNext(previousHalfEdge2);
-                halfEdge2->setPrev(nextHalfEdge2);
-                edgeOfFace = halfEdge2;
-            } else {
-                halfEdge1->setNext(nextHalfEdge1);
-                halfEdge1->setPrev(previousHalfEdge1);
-                edgeOfFace = halfEdge1;
-            }
-            continue;
+        if (!edge2->getNext()) {
+            edge2->setNext(edge1);
+            edge2->setPrev(edge3);
         }
-
-        halfEdge1->setNext(nextHalfEdge1);
-        halfEdge2->setNext(previousHalfEdge2);
-
-        halfEdge1->setPrev(previousHalfEdge1);
-        halfEdge2->setPrev(nextHalfEdge2);
-
     }
 
-    return edgeOfFace != nullptr ? edgeOfFace : halfEdges.at(0).first;
+    return halfEdges;
 }
 
 void genFace(const std::shared_ptr<DCEL<GeographicPoint>>& dcel,
-             const std::shared_ptr<HalfEdge<GeographicPoint>>& edge,
+             const std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges,
              const json& properties) {
 
     auto face = std::make_shared<Face<GeographicPoint>>(properties);
     dcel->addFace(face);
-    face->setOuter(edge);
 
-    auto currentEdge = (edge->getIncident() == nullptr ? edge : edge->getTwin());
+    face->setOuter(edges.at(0));
 
-    do {
-        currentEdge->setIncident(face);
-        currentEdge = currentEdge->getNext();
-    } while (currentEdge != edge);
+    for (const auto& edge: edges)
+        edge->setIncident(face);
 
 }
 
@@ -170,16 +155,16 @@ std::shared_ptr<DCEL<GeographicPoint>> parseJSONtoDCEL(const std::string& jsonFi
         if (geometry["type"] == "MultiPolygon") {
             auto counter = 1;
             for (auto & coord : coords) {
-                auto edge = genGeographicPoints(dcel, coord);
+                auto edges = genGeographicPoints(dcel, coord);
                 auto properties = feat["properties"];
                 properties.emplace("MultiPolygonNumber", counter++);
-                genFace(dcel, edge, properties);
+                genFace(dcel, edges, properties);
 
             }
 
         } else if (geometry["type"] == "Polygon") {
-            auto edge = genGeographicPoints(dcel, coords);
-            genFace(dcel, edge, feat["properties"]);
+            auto edges = genGeographicPoints(dcel, coords);
+            genFace(dcel, edges, feat["properties"]);
         }
 
         std::cout << "Finished feature " << count++ << std::endl;

@@ -13,6 +13,7 @@ template <class T>
 class HalfEdge {
 public:
     HalfEdge(): incident(), next(), prev(), twin(), origin() {};
+    HalfEdge(const std::shared_ptr<Vertex<T>>& origin): incident(), next(), prev(), twin(), origin(origin) {};
     HalfEdge(HalfEdge &&) = default;
     HalfEdge(const HalfEdge &) = default;
     HalfEdge &operator=(HalfEdge &&) = default;
