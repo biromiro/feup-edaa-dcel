@@ -1,3 +1,4 @@
+// Copyright (c) 2023 EDAA Group C. All Rights Reserved.
 #ifndef DCEL_GEOGRAPHICPOINT_H
 #define DCEL_GEOGRAPHICPOINT_H
 
