@@ -8,24 +8,22 @@
 template <class T>
 class Vertex {
  public:
-    explicit Vertex(T value) : incident(), value(value) {}
+  explicit Vertex(T value) : incident(), value(value) {}
 
-    Vertex(Vertex &&)  noexcept = default;
-    Vertex(const Vertex &) = default;
-    Vertex &operator=(Vertex &&) = default;
-    Vertex &operator=(const Vertex &) = default;
+  Vertex(Vertex &&) noexcept = default;
+  Vertex(const Vertex &) = default;
+  Vertex &operator=(Vertex &&) = default;
+  Vertex &operator=(const Vertex &) = default;
 
-    [[nodiscard]] T getValue() const { return this->value; }
+  [[nodiscard]] T getValue() const { return this->value; }
 
-    void setIncident(const std::shared_ptr<HalfEdge<T>>& edge) {
-        this->incident = edge;
-    }
+  void setIncident(const std::shared_ptr<HalfEdge<T>> &edge) {
+    this->incident = edge;
+  }
 
-    bool operator<(const Vertex &rhs) const {
-        return value < rhs.value;
-    }
+  bool operator<(const Vertex &rhs) const { return value < rhs.value; }
 
-    std::shared_ptr<HalfEdge<T>> getIncident() { return this->incident; }
+  std::shared_ptr<HalfEdge<T>> getIncident() { return this->incident; }
 
  private:
   T value;
