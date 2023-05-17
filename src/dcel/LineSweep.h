@@ -6,9 +6,21 @@
 #include <vector>
 
 #include "./half_edge.hpp"
-#include "./vertex.hpp"
+#include "./intersection.hpp"
+#include "auxiliary.h"
 #include "GeographicPoint.h"
 #include "Event.h"
 
-std::vector<Vertex<GeographicPoint>> findIntersection(
-    std::vector<HalfEdge<GeographicPoint>> vertices);
+class LineSweep {
+public:
+    static std::vector<Intersection<GeographicPoint>> findIntersections(
+            const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges);
+
+    static void handleEventPoint(
+            const Event& event,
+            const std::priority_queue<Event>& eventQ,
+            const std::vector<HalfEdge<GeographicPoint>>& statusTree
+    );
+};
+
+

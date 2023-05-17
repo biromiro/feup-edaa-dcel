@@ -8,6 +8,7 @@
 #include <iostream>
 #include "./half_edge.hpp"
 #include "./vertex.hpp"
+#include "auxiliary.h"
 #include "GeographicPoint.h"
 
 // TODO: Should store the endpoint and have a function that returns a ordered value or overload operator
@@ -25,6 +26,8 @@ public:
           const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2 = nullptr);
     [[nodiscard]] EventType getType() const;
 
+    void addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge);
+
     bool operator<(const Event &rhs) const;
 
     bool operator>(const Event &rhs) const;
@@ -33,12 +36,12 @@ public:
 
     bool operator>=(const Event &rhs) const;
 
+
+
 private:
     EventType type;
-    std::shared_ptr<HalfEdge<GeographicPoint>> edge;
+    std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> edges;
     GeographicPoint endpoint;
-    bool isDownwards;
-
 };
 
 
