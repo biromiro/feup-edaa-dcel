@@ -4,9 +4,6 @@
 
 #include "./auxiliary.h"
 
-#include <fstream>
-#include <iostream>
-
 using json = nlohmann::json;
 
 bool isClockwise(
@@ -22,148 +19,43 @@ bool isClockwise(
   return accumulator > 0;
 }
 
-std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> genGeographicPoints(
-    const std::shared_ptr<DCEL<GeographicPoint>>& dcel, const json& json_file) {
-  std::vector<std::shared_ptr<Vertex<GeographicPoint>>> vertices;
-  std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> halfEdges, halfEdges2;
-
-  for (auto coords : json_file[0]) {
-    double latitude = coords[0], longitude = coords[1];
-
-    auto geoPoint = GeographicPoint(latitude, longitude);
-    auto vertex = dcel->getVertex(geoPoint);
-
-    if (vertex == nullptr) {
-      vertex = std::make_shared<Vertex<GeographicPoint>>(geoPoint);
-      dcel->addVertex(vertex);
-      vertices.emplace_back(vertex);
-    } else {
-      vertices.emplace_back(vertex);
-    }
-  }
-
-  if (isClockwise(vertices)) std::reverse(vertices.begin(), vertices.end());
-
-  for (auto i = 0; i < vertices.size(); i++) {
-    auto& currentVertex = vertices.at(i);
-    auto& nextVertex = vertices.at((i + 1) % vertices.size());
-
-    auto halfEdge1 = dcel->getHalfEdge(currentVertex, nextVertex);
-    auto halfEdge2 = dcel->getHalfEdge(nextVertex, currentVertex);
-
-    if (!halfEdge1 && !halfEdge2) {
-      halfEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(currentVertex);
-      halfEdge2 = std::make_shared<HalfEdge<GeographicPoint>>(nextVertex);
-
-      dcel->addEdge(halfEdge1);
-      dcel->addEdge(halfEdge2);
-
-      halfEdge1->setTwin(halfEdge2);
-      halfEdge2->setTwin(halfEdge1);
-
-    } else if (!halfEdge1 || !halfEdge2) {
-      throw std::invalid_argument("Edges should've been created already.");
-    }
-
-    halfEdges.push_back(halfEdge1);
-    halfEdges2.push_back(halfEdge2);
-  }
-
-  for (auto i = 0; i < halfEdges.size(); i++) {
-    auto edge1 = halfEdges.at(i);
-    auto edge2 = halfEdges.at((i + 1) % halfEdges.size());
-    auto edge3 = halfEdges.at((i + 2) % halfEdges.size());
-
-    if (edge2->getNext()) {
-      edge2->getPrev()->setNext(edge1->getTwin());
-      edge2->getNext()->setPrev(edge3->getTwin());
-    }
-
-    edge2->setNext(edge3);
-    edge2->setPrev(edge1);
-  }
-
-  for (auto i = 0; i < halfEdges.size(); i++) {
-    auto edge1 = halfEdges.at(i);
-    auto edge2 = halfEdges.at((i + 1) % halfEdges.size());
-    auto edge3 = halfEdges.at((i + 2) % halfEdges.size());
-
-    if (!edge2->getNext()) {
-      edge2->setNext(edge1);
-      edge2->setPrev(edge3);
-    }
-  }
-
-  return halfEdges;
+bool ccw (GeographicPoint p1, GeographicPoint p2, GeographicPoint p3) {
+    return (p3.getLatitude()-p1.getLatitude()) * (p2.getLongitude()-p1.getLongitude()) >
+            (p2.getLatitude()-p1.getLatitude()) * (p3.getLongitude()-p1.getLongitude());
 }
 
-void genFace(
-    const std::shared_ptr<DCEL<GeographicPoint>>& dcel,
-    const std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges,
-    const json& properties) {
-  auto face = std::make_shared<Face<GeographicPoint>>(properties);
-  dcel->addFace(face);
+bool edgesIntersect (
+        const std::shared_ptr<HalfEdge<GeographicPoint>>& edge1,
+        const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2
+) {
+    auto p1 = edge1->getOrigin()->getValue();
+    auto p2 = edge1->getTwin()->getOrigin()->getValue();
+    auto p3 = edge2->getOrigin()->getValue();
+    auto p4 = edge2->getTwin()->getOrigin()->getValue();
 
-  face->setOuter(edges.at(0));
-
-  for (const auto& edge : edges) edge->setIncident(face);
+    return ccw(p1,p3,p4) != ccw(p2,p3,p4) && ccw(p1,p2,p3) != ccw(p1,p2,p4);
 }
 
-std::shared_ptr<DCEL<GeographicPoint>> parseJSONtoDCEL(
-    const std::string& jsonFilePath) {
-  // read json file
-  std::ifstream f("../data/" + jsonFilePath);
-  json data = json::parse(f);
+GeographicPoint calculateIntersectionPoint(
+        const std::shared_ptr<HalfEdge<GeographicPoint>>& edge1,
+        const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2
+) {
 
-  // create DCEL
-  auto dcel = std::make_shared<DCEL<GeographicPoint>>();
+    if (!edgesIntersect(edge1, edge2))
+        throw std::invalid_argument("Can't generate intersection point since edges do not intersect!");
 
-  if (data["type"] != "FeatureCollection") {
-    const std::string error_msg =
-        "The provided json file does not have the expected type "
-        "'FeatureCollection'.";
-    throw std::invalid_argument(error_msg);
-  }
+    auto p1 = edge1->getOrigin()->getValue();
+    auto p2 = edge1->getTwin()->getOrigin()->getValue();
+    auto p3 = edge2->getOrigin()->getValue();
+    auto p4 = edge2->getTwin()->getOrigin()->getValue();
 
-  // iterate through all vertices and create a vertex for each one
-  std::cout << data["features"].size() << " features to parse." << std::endl;
-  auto count = 1;
-  for (json::iterator it = data["features"].begin();
-       it != data["features"].end(); ++it) {
-    auto feat = *it;
+    auto x1 = p1.getLatitude(), y1 = p1.getLongitude(),
+            x2 = p2.getLatitude(), y2 = p2.getLongitude(),
+            x3 = p3.getLatitude(), y3 = p3.getLongitude(),
+            x4 = p4.getLatitude(), y4 = p4.getLongitude();
 
-    if (feat["type"] != "Feature") {
-      const std::string error_msg =
-          "The provided json file does not have the expected type 'Feature'.";
-      throw std::invalid_argument(error_msg);
-    }
-
-    auto geometry = feat["geometry"];
-
-    if (geometry["type"] != "MultiPolygon" && geometry["type"] != "Polygon") {
-      const std::string error_msg =
-          "The provided json file does not have the expected type 'Polygon' or "
-          "'MultiPolygon'.";
-      throw std::invalid_argument(error_msg);
-    }
-
-    auto coords = geometry["coordinates"];
-    if (geometry["type"] == "MultiPolygon") {
-      auto counter = 1;
-      for (auto& coord : coords) {
-        auto edges = genGeographicPoints(dcel, coord);
-        auto properties = feat["properties"];
-        properties.emplace("MultiPolygonNumber", counter++);
-        genFace(dcel, edges, properties);
-      }
-
-    } else if (geometry["type"] == "Polygon") {
-      auto edges = genGeographicPoints(dcel, coords);
-      genFace(dcel, edges, feat["properties"]);
-    }
-
-    std::cout << "Finished feature " << count++ << std::endl;
-  }
-
-  return dcel;
+    return {
+            ((x1*y2 - y1*x2)*(x3 - x4) - (x1 - x2)*(x3*y4 - y3*x4)) / ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4)),
+            ((x1*y2 - y1*x2)*(y3 - y4) - (y1 - y2)*(x3*y4 - y3*x4)) / ((x1 - x2)*(y3 - y4) - (y1 - y2)*(x3 - x4))
+    };
 }

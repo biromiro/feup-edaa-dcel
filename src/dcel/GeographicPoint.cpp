@@ -4,6 +4,8 @@
 
 #include "GeographicPoint.h"
 
+GeographicPoint::GeographicPoint() {}
+
 GeographicPoint::GeographicPoint(double lat_, double long_)
     : latitude(lat_), longitude(long_) {}
 

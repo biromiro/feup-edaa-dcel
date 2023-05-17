@@ -29,17 +29,21 @@ std::vector<Vertex<GeographicPoint>> findIntersection(
     vertices.push_back(*segment.getOrigin());
   }
 
-  std::priority_queue<Vertex<GeographicPoint>,
-                      std::vector<Vertex<GeographicPoint>>, PointComparator>
-      queue(vertices.begin(), vertices.end());
+  // TODO(): Event Queue must have upper endpoints and lower endpoints
+  //     for both input sets of endpoints
 
-  // TODO(Tiago): Figure out a BST to store the edges
+  std::priority_queue<Event> eventQ{};
 
+
+
+  // TODO(Tiago): Figure out a BST to store the edges - better to use a vector and implement BST-like functions
+  //  for lookup, insertion and swap
+    /*
   while (!queue.empty()) {
     std::cout << queue.top().getValue().getLatitude() << " "
               << queue.top().getValue().getLongitude() << std::endl;
     queue.pop();
-  }
+  }*/
 
   return vertices;
 }

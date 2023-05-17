@@ -5,8 +5,10 @@
 #include <ostream>
 
 class GeographicPoint {
- public:
+public:
   GeographicPoint(double lat_, double long_);
+
+  GeographicPoint();
 
   friend std::ostream &operator<<(std::ostream &os,
                                   const GeographicPoint &point);

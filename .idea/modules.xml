@@ -2,7 +2,6 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/feup-edaa-dcel.iml" filepath="$PROJECT_DIR$/.idea/feup-edaa-dcel.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/feup-edaa-dcel2.iml" filepath="$PROJECT_DIR$/.idea/feup-edaa-dcel2.iml" />
     </modules>
   </component>
