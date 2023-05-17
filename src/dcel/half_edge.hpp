@@ -11,14 +11,14 @@ class Face;
 
 template <class T>
 class HalfEdge {
- public:
-  HalfEdge() : incident(), next(), prev(), twin(), origin() {}
-  explicit HalfEdge(const std::shared_ptr<Vertex<T>> &origin)
-      : incident(), next(), prev(), twin(), origin(origin) {}
-  HalfEdge(HalfEdge &&) = default;
-  HalfEdge(const HalfEdge &) = default;
-  HalfEdge &operator=(HalfEdge &&) = default;
-  HalfEdge &operator=(const HalfEdge &) = default;
+public:
+    HalfEdge(): incident(), next(), prev(), twin(), origin() {};
+    explicit HalfEdge(const std::shared_ptr<Vertex<T>>& origin): incident(), next(), prev(), twin(), origin(origin) {};
+    HalfEdge(const std::shared_ptr<Vertex<T>>& origin, const std::shared_ptr<Face<T>>& face): incident(face), next(), prev(), twin(), origin(origin) {};
+    HalfEdge(HalfEdge &&) = default;
+    HalfEdge(const HalfEdge &) = default;
+    HalfEdge &operator=(HalfEdge &&) = default;
+    HalfEdge &operator=(const HalfEdge &) = default;
 
   void setOrigin(const std::shared_ptr<Vertex<T>> &origin_) {
     this->origin = origin_;
