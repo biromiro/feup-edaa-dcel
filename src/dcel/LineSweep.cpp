@@ -6,26 +6,49 @@
 
 #include "GeographicPoint.h"
 
-/**
- * I need to first unite the half edges into line segments, but I need to do so
- * without increasing the space complexity
- */
+Segment::Segment(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
+    this->vertex1 = edge->getOrigin()->getValue();
+    this->vertex2 = edge->getTwin()->getOrigin()->getValue();
+    this->slope = (vertex2.getLatitude() - vertex1.getLatitude()) / (vertex2.getLongitude() - vertex1.getLongitude());
+    this->bias = vertex1.getLatitude() - this->slope * vertex1.getLongitude();
+}
+
+GeographicPoint Segment::getUpperEndpoint() const {
+    return vertex1 < vertex2 ? vertex1 : vertex2;
+}
+
+GeographicPoint Segment::getLowerEndpoint() const {
+    return vertex1 < vertex2 ? vertex2 : vertex1;
+}
+
+double Segment::getSegmentCurrentLongitude(double latitude) const {
+    return (latitude - this->bias) / this->slope;
+}
+
+const std::shared_ptr<HalfEdge<GeographicPoint>> &Segment::getEdge() const {
+    return edge;
+}
 
 // TODO(): This logic should follow the endpoint of an edge - might be better to use an alternative structure
 //          although it would be a lot more efficient if we stood with half edge pointers
 
-void LineSweep::insertInStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
-                                   std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
-    auto itr = std::lower_bound(statusTree.begin(), statusTree.end(), edge);
-}
+void LineSweep::insertInStatusTree(std::vector<Segment> &statusTree,
+                                   const Event& event) {
+    // TODO: Create Segment and check where to add it
 
-void LineSweep::removeFromStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
-                                     std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
 
 }
 
-void LineSweep::swapWithNeighborInStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
-                                             std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
+void LineSweep::removeFromStatusTree(std::vector<Segment> &statusTree,
+                                     const Event& event) {
+
+
+
+}
+
+void LineSweep::swapWithNeighborInStatusTree(std::vector<Segment> &statusTree,
+                                             const Event& event) {
+
 
 }
 
@@ -39,11 +62,11 @@ std::vector<Intersection<GeographicPoint>> LineSweep::findIntersections(
 
     std::priority_queue<Event> eventQ{};
     std::set<Event> events;
-    std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> statusTree;
+    std::vector<Segment> statusTree;
 
     for (const auto& segment : edges) {
-        auto newEventUpper = Event(UPPER_ENDPOINT, segment);
-        auto newEventLower = Event(LOWER_ENDPOINT, segment);
+        auto newEventUpper = Event(segment->getOrigin()->getValue());
+        auto newEventLower = Event(segment->getTwin()->getOrigin()->getValue());
 
         auto previousEventUpperItr = events.find(newEventUpper),
              previousEventLowerItr = events.find(newEventLower);
@@ -79,7 +102,7 @@ std::vector<Intersection<GeographicPoint>> LineSweep::findIntersections(
 }
 
 void LineSweep::handleEventPoint(const Event &event, std::priority_queue<Event> &eventQ,
-                                 std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree) {
+                                 std::vector<Segment> &statusTree) {
 
 
 }
@@ -93,5 +116,7 @@ void LineSweep::findNewEvent(const std::shared_ptr<HalfEdge<GeographicPoint>> &s
             (p.getEndpoint().getLongitude() == intersectionPoint.getLongitude()
             && p.getEndpoint().getLatitude() < intersectionPoint.getLatitude())
             )
-        eventQ.push(Event(INTERSECTION, sl, sr));
+        eventQ.push(Event(intersectionPoint));
+    // TODO: Add edges to intersection point event
 }
+

@@ -4,11 +4,10 @@
 
 #include "Event.h"
 
-Event::Event(EventType type, const std::shared_ptr<HalfEdge<GeographicPoint>> &edge,
-             const std::shared_ptr<HalfEdge<GeographicPoint>> &edge2): type(type) {
+Event::Event(const GeographicPoint& endpoint) {
 
     this->edges = std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>();
-
+    /*
     if (type == INTERSECTION) {
         if (!edge2)
             throw std::invalid_argument("Intersection event must have two edges as constructor.");
@@ -27,29 +26,12 @@ Event::Event(EventType type, const std::shared_ptr<HalfEdge<GeographicPoint>> &e
     else if (type == LOWER_ENDPOINT)
         this->endpoint = orig < dest ? dest : orig;
 
-    edges.insert(edge);
-}
-
-EventType Event::getType() const {
-    return type;
+    edges.insert(edge);*/
+    this->endpoint = endpoint;
 }
 
 bool Event::operator<(const Event &rhs) const {
-    if (this->endpoint == rhs.endpoint)
-        return this->type < rhs.type;
     return this->endpoint < rhs.endpoint;
-}
-
-bool Event::operator>(const Event &rhs) const {
-    return rhs < *this;
-}
-
-bool Event::operator<=(const Event &rhs) const {
-    return !(rhs < *this);
-}
-
-bool Event::operator>=(const Event &rhs) const {
-    return !(*this < rhs);
 }
 
 void Event::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
@@ -58,6 +40,10 @@ void Event::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
 
 const GeographicPoint &Event::getEndpoint() const {
     return endpoint;
+}
+
+const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &Event::getEdges() const {
+    return edges;
 }
 
 

@@ -14,33 +14,19 @@
 // TODO: Should store the endpoint and have a function that returns a ordered value or overload operator
 //       to order events
 
-enum EventType {
-    UPPER_ENDPOINT,
-    LOWER_ENDPOINT,
-    INTERSECTION
-};
-
 class Event {
 public:
-    Event(EventType type, const std::shared_ptr<HalfEdge<GeographicPoint>>& edge,
-          const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2 = nullptr);
-    [[nodiscard]] EventType getType() const;
+    explicit Event(const GeographicPoint& endpoint);
     [[nodiscard]] const GeographicPoint &getEndpoint() const;
 
     void addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge);
 
+    [[nodiscard]] const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &getEdges() const;
+
     bool operator<(const Event &rhs) const;
-
-    bool operator>(const Event &rhs) const;
-
-    bool operator<=(const Event &rhs) const;
-
-    bool operator>=(const Event &rhs) const;
-
 
 
 private:
-    EventType type;
     std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> edges;
     GeographicPoint endpoint;
 };
