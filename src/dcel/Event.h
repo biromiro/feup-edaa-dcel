@@ -25,6 +25,7 @@ public:
     Event(EventType type, const std::shared_ptr<HalfEdge<GeographicPoint>>& edge,
           const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2 = nullptr);
     [[nodiscard]] EventType getType() const;
+    [[nodiscard]] const GeographicPoint &getEndpoint() const;
 
     void addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge);
 

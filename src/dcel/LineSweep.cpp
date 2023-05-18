@@ -11,6 +11,24 @@
  * without increasing the space complexity
  */
 
+// TODO(): This logic should follow the endpoint of an edge - might be better to use an alternative structure
+//          although it would be a lot more efficient if we stood with half edge pointers
+
+void LineSweep::insertInStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
+                                   std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
+    auto itr = std::lower_bound(statusTree.begin(), statusTree.end(), edge);
+}
+
+void LineSweep::removeFromStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
+                                     std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
+
+}
+
+void LineSweep::swapWithNeighborInStatusTree(std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree,
+                                             std::shared_ptr<HalfEdge<GeographicPoint>> edge) {
+
+}
+
 std::vector<Intersection<GeographicPoint>> LineSweep::findIntersections(
         const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges
         ) {
@@ -21,7 +39,7 @@ std::vector<Intersection<GeographicPoint>> LineSweep::findIntersections(
 
     std::priority_queue<Event> eventQ{};
     std::set<Event> events;
-    std::vector<HalfEdge<GeographicPoint>> statusTree;
+    std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> statusTree;
 
     for (const auto& segment : edges) {
         auto newEventUpper = Event(UPPER_ENDPOINT, segment);
@@ -60,8 +78,20 @@ std::vector<Intersection<GeographicPoint>> LineSweep::findIntersections(
     return intersections;
 }
 
-void LineSweep::handleEventPoint(const Event &event, const std::priority_queue<Event> &eventQ,
-                                 const std::vector<HalfEdge<GeographicPoint>> &statusTree) {
+void LineSweep::handleEventPoint(const Event &event, std::priority_queue<Event> &eventQ,
+                                 std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> &statusTree) {
 
 
+}
+
+void LineSweep::findNewEvent(const std::shared_ptr<HalfEdge<GeographicPoint>> &sl,
+                             const std::shared_ptr<HalfEdge<GeographicPoint>> &sr, const Event &p,
+                             std::priority_queue<Event> &eventQ) {
+
+    auto intersectionPoint = calculateIntersectionPoint(sl, sr);
+    if (p.getEndpoint().getLongitude() < intersectionPoint.getLongitude() ||
+            (p.getEndpoint().getLongitude() == intersectionPoint.getLongitude()
+            && p.getEndpoint().getLatitude() < intersectionPoint.getLatitude())
+            )
+        eventQ.push(Event(INTERSECTION, sl, sr));
 }

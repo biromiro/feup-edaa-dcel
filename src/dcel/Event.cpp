@@ -56,4 +56,8 @@ void Event::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
     (this->edges).insert(edge);
 }
 
+const GeographicPoint &Event::getEndpoint() const {
+    return endpoint;
+}
+
 

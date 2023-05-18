@@ -13,13 +13,37 @@
 
 class LineSweep {
 public:
+
+    static void insertInStatusTree(
+            std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& statusTree,
+            std::shared_ptr<HalfEdge<GeographicPoint>> edge
+            );
+
+    static void removeFromStatusTree(
+            std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& statusTree,
+            std::shared_ptr<HalfEdge<GeographicPoint>> edge
+    );
+
+    static void swapWithNeighborInStatusTree(
+            std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& statusTree,
+            std::shared_ptr<HalfEdge<GeographicPoint>> edge
+    );
+
+
     static std::vector<Intersection<GeographicPoint>> findIntersections(
             const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges);
 
     static void handleEventPoint(
             const Event& event,
-            const std::priority_queue<Event>& eventQ,
-            const std::vector<HalfEdge<GeographicPoint>>& statusTree
+            std::priority_queue<Event>& eventQ,
+            std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& statusTree
+    );
+
+    static void findNewEvent(
+            const std::shared_ptr<HalfEdge<GeographicPoint>>& sl,
+            const std::shared_ptr<HalfEdge<GeographicPoint>>& sr,
+            const Event& p,
+            std::priority_queue<Event>& eventQ,
     );
 };
 
