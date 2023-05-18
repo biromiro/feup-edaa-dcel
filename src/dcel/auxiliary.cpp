@@ -2,6 +2,7 @@
 // Created by nrtc on 4/17/2023.
 //
 
+#include <iostream>
 #include "./auxiliary.h"
 
 using json = nlohmann::json;
@@ -40,7 +41,6 @@ GeographicPoint calculateIntersectionPoint(
         const std::shared_ptr<HalfEdge<GeographicPoint>>& edge1,
         const std::shared_ptr<HalfEdge<GeographicPoint>>& edge2
 ) {
-
     if (!edgesIntersect(edge1, edge2))
         throw std::invalid_argument("Can't generate intersection point since edges do not intersect!");
 

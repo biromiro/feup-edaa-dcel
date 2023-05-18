@@ -2,6 +2,7 @@
 #pragma once
 
 #include <memory>
+#include <ostream>
 
 template <class T>
 class Vertex;
@@ -20,7 +21,13 @@ public:
     HalfEdge &operator=(HalfEdge &&) = default;
     HalfEdge &operator=(const HalfEdge &) = default;
 
-  void setOrigin(const std::shared_ptr<Vertex<T>> &origin_) {
+    friend std::ostream &operator<<(std::ostream &os, const HalfEdge &edge) {
+        os << "origin: " << edge.origin << " twin: " << edge.twin << " next: " << edge.next << " prev: " << edge.prev
+           << " incident: " << edge.incident;
+        return os;
+    }
+
+    void setOrigin(const std::shared_ptr<Vertex<T>> &origin_) {
     this->origin = origin_;
   }
 

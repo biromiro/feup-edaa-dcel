@@ -6,44 +6,29 @@
 
 Event::Event(const GeographicPoint& endpoint) {
 
-    this->edges = std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>();
-    /*
-    if (type == INTERSECTION) {
-        if (!edge2)
-            throw std::invalid_argument("Intersection event must have two edges as constructor.");
-
-        this->endpoint = calculateIntersectionPoint(edge, edge2);
-        edges.insert(edge);
-        edges.insert(edge2);
-        return;
-    }
-
-    auto orig = edge->getOrigin()->getValue();
-    auto dest = edge->getTwin()->getOrigin()->getValue();
-
-    if (type == UPPER_ENDPOINT)
-        this->endpoint = orig < dest ? orig : dest;
-    else if (type == LOWER_ENDPOINT)
-        this->endpoint = orig < dest ? dest : orig;
-
-    edges.insert(edge);*/
+    this->segments = std::set<std::shared_ptr<Segment>, SegmentComparator>();
     this->endpoint = endpoint;
 }
 
-bool Event::operator<(const Event &rhs) const {
-    return this->endpoint < rhs.endpoint;
-}
-
-void Event::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
-    (this->edges).insert(edge);
+void Event::addSegment(const std::shared_ptr<Segment> &segment) {
+    if (segment->getUpperEndpoint() == this->endpoint)
+        (this->segments).insert(segment);
 }
 
 const GeographicPoint &Event::getEndpoint() const {
     return endpoint;
 }
 
-const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &Event::getEdges() const {
-    return edges;
+const std::set<std::shared_ptr<Segment>, SegmentComparator> &Event::getSegments() const {
+    return segments;
+}
+
+std::ostream &operator<<(std::ostream &os, const Event &event) {
+    os << "number of segments: " << event.segments.size() << " endpoint: " << event.endpoint << "\n";
+    os << "segments:\n";
+    for (auto segment: event.segments)
+        os << segment << "\n";
+    return os;
 }
 
 
