@@ -110,9 +110,6 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
     std::set<std::shared_ptr<Event>, EventComparator> events;
     std::vector<std::shared_ptr<Segment>> statusTree;
 
-    std::cout << "Generating eventq for " << edges.size() << " edges" <<
-    std::flush << std::endl;
-
     for (const auto& segment : edges) {
         auto newEvent = std::make_shared<Event>(segment->getOrigin()->getValue());
 
@@ -131,10 +128,7 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
         eventQ.push(event);
     }
 
-    std::cout << "Generated eventq with " << eventQ.size() << " entries" << std::flush << std::endl;
-
     while (!eventQ.empty()) {
-        std::cout << "Handling event " << *(eventQ.top()) << std::endl;
         handleEventPoint(eventQ.top(), events, eventQ, intersections, statusTree);
         eventQ.pop();
     }
@@ -165,7 +159,6 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
     }
 
     if (upperSegments.size() + lowerSegments.size() + intersectingSegments.size() > 1){
-        std::cout << "Found an intersection" << std::endl;
         auto intersection = std::make_shared<Intersection>(endpoint);
         for (const auto& segment: upperSegments)
             intersection->addEdge(segment->getEdge());
@@ -235,7 +228,6 @@ void LineSweep::findNewEvent(const std::shared_ptr<Segment> &sl,
             && p->getEndpoint().getLongitude() < intersectionPoint.getLongitude())
             ) {
 
-        std::cout << "Intersection between  " << sl << " and " << sr << " at " << intersectionPoint << std::flush << std::endl;
         auto newEvent = std::make_shared<Event>(intersectionPoint);
         auto previousEventItr = events.find(newEvent);
 
