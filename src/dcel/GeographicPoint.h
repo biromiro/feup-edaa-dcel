@@ -3,6 +3,7 @@
 #define DCEL_GEOGRAPHICPOINT_H
 
 #include <ostream>
+#include "auxiliary.h"
 
 class GeographicPoint {
 public:

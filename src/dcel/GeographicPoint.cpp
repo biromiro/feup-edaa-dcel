@@ -10,12 +10,12 @@ GeographicPoint::GeographicPoint(double lat_, double long_)
     : latitude(lat_), longitude(long_) {}
 
 std::ostream &operator<<(std::ostream &os, const GeographicPoint &point) {
-  os << "latitude: " << point.latitude << " longitude: " << point.longitude;
+  os << "longitude: " << point.longitude << " latitude: " << point.latitude;
   return os;
 }
 
 bool GeographicPoint::operator==(const GeographicPoint &rhs) const {
-  return latitude == rhs.latitude && longitude == rhs.longitude;
+  return approximatelyEqual(latitude,rhs.latitude) && approximatelyEqual(longitude, rhs.longitude);
 }
 
 bool GeographicPoint::operator!=(const GeographicPoint &rhs) const {

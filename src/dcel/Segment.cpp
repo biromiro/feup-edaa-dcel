@@ -21,7 +21,7 @@ GeographicPoint Segment::getLowerEndpoint() const {
 }
 
 double Segment::getSegmentCurrentLongitude(double latitude) const {
-    if (std::isinf(this->slope) || this->getUpperEndpoint().getLongitude())
+    if (std::isinf(this->slope) || this->slope == 0)
         return this->getUpperEndpoint().getLongitude();
     return (latitude - this->bias) / this->slope;
 }

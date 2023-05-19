@@ -6,6 +6,7 @@
 
 std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> Parser::genGeographicPoints(
         const std::shared_ptr<DCEL<GeographicPoint>>& dcel, const json& json_file) {
+
     std::vector<std::shared_ptr<Vertex<GeographicPoint>>> vertices;
     std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> halfEdges, halfEdges2;
 
@@ -23,6 +24,8 @@ std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> Parser::genGeographicPoi
             vertices.emplace_back(vertex);
         }
     }
+
+    vertices.pop_back();
 
     if (isClockwise(vertices)) std::reverse(vertices.begin(), vertices.end());
 

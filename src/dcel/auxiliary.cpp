@@ -2,10 +2,16 @@
 // Created by nrtc on 4/17/2023.
 //
 
+#include <cmath>
 #include <iostream>
 #include "./auxiliary.h"
 
 using json = nlohmann::json;
+
+bool approximatelyEqual(double a, double b)
+{
+    return std::fabs(a - b) <= ( (std::fabs(a) < std::fabs(b) ? std::fabs(b) : std::fabs(a)) * EPSILON);
+}
 
 bool isClockwise(
     const std::vector<std::shared_ptr<Vertex<GeographicPoint>>>& vertices) {

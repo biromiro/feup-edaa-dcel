@@ -7,9 +7,14 @@
 
 #include "./dcel.hpp"
 #include "./half_edge.hpp"
-#include "GeographicPoint.h"
+
+#define EPSILON 1E-10
+
+class GeographicPoint;
 
 using json = nlohmann::json;
+
+bool approximatelyEqual(double a, double b);
 
 bool isClockwise(
     const std::vector<std::shared_ptr<Vertex<GeographicPoint>>>& vertices);

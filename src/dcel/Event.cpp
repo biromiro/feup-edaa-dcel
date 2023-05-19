@@ -13,7 +13,6 @@ Event::Event(const GeographicPoint& endpoint) {
 void Event::addSegment(const std::shared_ptr<Segment> &segment) {
     if (segment->getUpperEndpoint() == this->endpoint)
         (this->segments).insert(segment);
-    std::cout << "hey" << std::endl;
 }
 
 const GeographicPoint &Event::getEndpoint() const {

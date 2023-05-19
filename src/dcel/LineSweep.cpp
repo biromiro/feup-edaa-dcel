@@ -10,7 +10,7 @@
 //          although it would be a lot more efficient if we stood with half edge pointers
 
 struct StatusComparator {
-    StatusComparator(double currentSweepLine) { this->currentSweepLine = currentSweepLine; }
+    StatusComparator(double currentSweepLine) { this->currentSweepLine = currentSweepLine - EPSILON; }
 
     bool operator () (const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
         auto segment1Long = s1->getSegmentCurrentLongitude(currentSweepLine),
@@ -56,7 +56,7 @@ void LineSweep::insertInStatusTree(std::vector<std::shared_ptr<Segment>> &status
         return;
 
     // the new order should follow what's immediately below the current sweep line
-    auto currentSweepLine = endpoint.getLatitude() - 0.01;
+    auto currentSweepLine = endpoint.getLatitude();
 
     for (const auto& segment: segmentsToInsert) {
         auto itr = std::lower_bound(statusTree.begin(),
@@ -155,7 +155,7 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
     for (const auto& segment: statusTree) {
         if (segment->getLowerEndpoint() == endpoint)
             lowerSegments.insert(segment);
-        else if (endpoint.getLongitude() == segment->getSegmentCurrentLongitude(endpoint.getLatitude()))
+        else if (approximatelyEqual(endpoint.getLongitude(), segment->getSegmentCurrentLongitude(endpoint.getLatitude())))
             intersectingSegments.insert(segment);
         else if (segment->getSlope() == 0 && (
                 endpoint.getLongitude() >= segment->getUpperEndpoint().getLongitude() &&
@@ -230,9 +230,9 @@ void LineSweep::findNewEvent(const std::shared_ptr<Segment> &sl,
 
     auto intersectionPoint = calculateIntersectionPoint(sl->getEdge(), sr->getEdge());
 
-    if (p->getEndpoint().getLongitude() < intersectionPoint.getLongitude() ||
-            (p->getEndpoint().getLongitude() == intersectionPoint.getLongitude()
-            && p->getEndpoint().getLatitude() < intersectionPoint.getLatitude())
+    if (intersectionPoint.getLatitude() < p->getEndpoint().getLatitude() ||
+            (approximatelyEqual(p->getEndpoint().getLatitude(),intersectionPoint.getLatitude())
+            && p->getEndpoint().getLongitude() < intersectionPoint.getLongitude())
             ) {
 
         std::cout << "Intersection between  " << sl << " and " << sr << " at " << intersectionPoint << std::flush << std::endl;

@@ -5,8 +5,8 @@
 #include "LineSweep.h"
 
 int main() {
-    const auto dcel1 = Parser::parseJSONtoDCEL("test-map-3.json");
-    const auto dcel2 = Parser::parseJSONtoDCEL("test-map-4.json");
+    const auto dcel1 = Parser::parseJSONtoDCEL("test-map-1.json");
+    const auto dcel2 = Parser::parseJSONtoDCEL("test-map-2.json");
 
     std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> edges;
 
