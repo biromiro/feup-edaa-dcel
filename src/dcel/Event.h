@@ -34,7 +34,7 @@ private:
 
 struct EventComparator {
     bool operator()(const std::shared_ptr<Event>& left, const std::shared_ptr<Event>& right) const {
-        return left->getEndpoint() < right->getEndpoint();
+        return left->getEndpoint() > right->getEndpoint();
     };
 };
 

@@ -2,7 +2,7 @@
 #pragma once
 
 #include <memory>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <set>
 #include <utility>
 #include <vector>

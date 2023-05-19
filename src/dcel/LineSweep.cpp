@@ -9,6 +9,45 @@
 // TODO(): This logic should follow the endpoint of an edge - might be better to use an alternative structure
 //          although it would be a lot more efficient if we stood with half edge pointers
 
+struct StatusComparator {
+    StatusComparator(double currentSweepLine) { this->currentSweepLine = currentSweepLine; }
+
+    bool operator () (const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
+        auto segment1Long = s1->getSegmentCurrentLongitude(currentSweepLine),
+                segment2Long = s2->getSegmentCurrentLongitude(currentSweepLine);
+
+        if (s1->getUpperEndpoint() == s2->getUpperEndpoint()) {
+            if (s1->getSlope() == 0) return false;
+            if (s2->getSlope() == 0) return true;
+        }
+
+        return segment1Long < segment2Long;
+    };
+
+    double currentSweepLine;
+};
+
+/**
+ * @param v - sorted vector instance
+ * @param data - value to search
+ * @return 0-based index if data found, -1 otherwise
+*/
+size_t binary_search_find_index(const std::vector<std::shared_ptr<Segment>>& statusTree,
+                                const GeographicPoint& endpoint,
+                                const std::shared_ptr<Segment> &segment) {
+    auto currentSweepLine = endpoint.getLatitude();
+
+    auto it = std::lower_bound(statusTree.begin(),
+                               statusTree.end(),
+                               segment, StatusComparator(currentSweepLine));
+    if (it == statusTree.end() || *it != segment) {
+        return -1;
+    } else {
+        std::size_t index = std::distance(statusTree.begin(), it);
+        return index;
+    }
+}
+
 void LineSweep::insertInStatusTree(std::vector<std::shared_ptr<Segment>> &statusTree,
                                    GeographicPoint endpoint,
                                    const std::set<std::shared_ptr<Segment>, SegmentComparator>& segmentsToInsert) {
@@ -17,16 +56,12 @@ void LineSweep::insertInStatusTree(std::vector<std::shared_ptr<Segment>> &status
         return;
 
     // the new order should follow what's immediately below the current sweep line
-    auto currentSweepLine = endpoint.getLatitude() + 0.01;
+    auto currentSweepLine = endpoint.getLatitude() - 0.01;
 
     for (const auto& segment: segmentsToInsert) {
         auto itr = std::lower_bound(statusTree.begin(),
                                     statusTree.end(),
-                                    segment, [currentSweepLine](const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
-            auto segment1Lat = s1->getSegmentCurrentLongitude(currentSweepLine),
-                    segment2Lat = s2->getSegmentCurrentLongitude(currentSweepLine);
-            return segment1Lat < segment2Lat;
-        });
+                                    segment, StatusComparator(currentSweepLine));
         statusTree.insert(itr, segment);
     }
 }
@@ -53,34 +88,16 @@ int LineSweep::findLeftNeighborInStatusTree(std::vector<std::shared_ptr<Segment>
                                             GeographicPoint endpoint,
                                             const std::shared_ptr<Segment> &segment) {
 
-    auto currentSweepLine = endpoint.getLatitude();
-    auto itr = std::lower_bound(statusTree.begin(), statusTree.end(), segment, [currentSweepLine](const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
-        auto segment1Lat = s1->getSegmentCurrentLongitude(currentSweepLine),
-                segment2Lat = s2->getSegmentCurrentLongitude(currentSweepLine);
-        return segment1Lat < segment2Lat;
-    });
+    auto idx = binary_search_find_index(statusTree, endpoint, segment);
+    if (idx == -1) return -1;
+    return idx - 1;
 
-    int distance = std::distance(statusTree.begin(), itr);
-    if (distance >= statusTree.size()) {
-        distance = -1;
-    } else if ((*itr) == segment) {
-        distance -= 1;
-    }
-    return distance;
 }
 
 int LineSweep::findRightNeighborInStatusTree(std::vector<std::shared_ptr<Segment>> &statusTree, GeographicPoint endpoint, const std::shared_ptr<Segment> &segment) {
-    auto currentSweepLine = endpoint.getLatitude();
-    auto itr = std::upper_bound(statusTree.begin(), statusTree.end(), segment, [currentSweepLine](const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
-        auto segment1Lat = s1->getSegmentCurrentLongitude(currentSweepLine),
-                segment2Lat = s2->getSegmentCurrentLongitude(currentSweepLine);
-        return segment1Lat < segment2Lat;
-    });
-
-    int distance = std::distance(statusTree.begin(), itr);
-    if (distance >= statusTree.size())
-        distance = -1;
-    return distance;
+    auto idx = binary_search_find_index(statusTree, endpoint, segment);
+    if (idx == -1 || idx + 1== statusTree.size()) return -1;
+    return idx + 1;
 }
 
 
@@ -105,7 +122,7 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
             newEvent->addSegment(newSegment);
             events.insert(newEvent);
         } else {
-            const auto& event = *previousEventItr;
+            auto& event = *previousEventItr;
             event->addSegment(newSegment);
         }
     }
@@ -117,7 +134,7 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
     std::cout << "Generated eventq with " << eventQ.size() << " entries" << std::flush << std::endl;
 
     while (!eventQ.empty()) {
-        //std::cout << "Handling event " << *(eventQ.top()) << std::endl;
+        std::cout << "Handling event " << *(eventQ.top()) << std::endl;
         handleEventPoint(eventQ.top(), events, eventQ, intersections, statusTree);
         eventQ.pop();
     }
@@ -139,6 +156,11 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
         if (segment->getLowerEndpoint() == endpoint)
             lowerSegments.insert(segment);
         else if (endpoint.getLongitude() == segment->getSegmentCurrentLongitude(endpoint.getLatitude()))
+            intersectingSegments.insert(segment);
+        else if (segment->getSlope() == 0 && (
+                endpoint.getLongitude() >= segment->getUpperEndpoint().getLongitude() &&
+                endpoint.getLongitude() <= segment->getLowerEndpoint().getLongitude()
+                ))
             intersectingSegments.insert(segment);
     }
 
@@ -182,9 +204,7 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
                   std::back_inserter(upperAndIntersectingSegments));
 
         std::sort(upperAndIntersectingSegments.begin(),
-                  upperAndIntersectingSegments.begin(), [currentSweepLine](const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
-            return s1->getSegmentCurrentLongitude(currentSweepLine) < s2->getSegmentCurrentLongitude(currentSweepLine);
-        });
+                  upperAndIntersectingSegments.end(), StatusComparator(currentSweepLine));
 
         auto sl = findLeftNeighborInStatusTree(statusTree, endpoint, upperAndIntersectingSegments.front());
 

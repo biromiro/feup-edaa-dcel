@@ -10,7 +10,7 @@ std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> Parser::genGeographicPoi
     std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> halfEdges, halfEdges2;
 
     for (auto coords : json_file[0]) {
-        double latitude = coords[0], longitude = coords[1];
+        double longitude = coords[0], latitude = coords[1];
 
         auto geoPoint = GeographicPoint(latitude, longitude);
         auto vertex = dcel->getVertex(geoPoint);

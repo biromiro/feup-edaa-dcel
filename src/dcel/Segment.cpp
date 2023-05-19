@@ -13,14 +13,16 @@ Segment::Segment(const std::shared_ptr<HalfEdge<GeographicPoint>> &edge) {
 }
 
 GeographicPoint Segment::getUpperEndpoint() const {
-    return vertex1 < vertex2 ? vertex1 : vertex2;
+    return this->vertex1 < this->vertex2 ? this->vertex1 : this->vertex2;
 }
 
 GeographicPoint Segment::getLowerEndpoint() const {
-    return vertex1 < vertex2 ? vertex2 : vertex1;
+    return this->vertex1 < this->vertex2 ? this->vertex2 : this->vertex1;
 }
 
 double Segment::getSegmentCurrentLongitude(double latitude) const {
+    if (std::isinf(this->slope) || this->getUpperEndpoint().getLongitude())
+        return this->getUpperEndpoint().getLongitude();
     return (latitude - this->bias) / this->slope;
 }
 
@@ -55,4 +57,8 @@ std::ostream &operator<<(std::ostream &os, const Segment &segment) {
     os << "edge: " << segment.edge << " vertex1: " << segment.vertex1 << " vertex2: " << segment.vertex2 << " slope: "
        << segment.slope << " bias: " << segment.bias;
     return os;
+}
+
+double Segment::getSlope() const {
+    return slope;
 }

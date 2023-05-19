@@ -23,8 +23,8 @@ bool GeographicPoint::operator!=(const GeographicPoint &rhs) const {
 }
 
 bool GeographicPoint::operator<(const GeographicPoint &rhs) const {
-  if (latitude < rhs.latitude) return true;
-  if (rhs.latitude < latitude) return false;
+  if (latitude > rhs.latitude) return true;
+  if (rhs.latitude > latitude) return false;
   return longitude < rhs.longitude;
 }
 

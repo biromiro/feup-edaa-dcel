@@ -30,9 +30,11 @@ public:
 
     [[nodiscard]] const GeographicPoint &getVertex1() const;
 
-    const GeographicPoint &getVertex2() const;
+    [[nodiscard]] const GeographicPoint &getVertex2() const;
 
     friend std::ostream &operator<<(std::ostream &os, const Segment &segment);
+
+    double getSlope() const;
 
 private:
     std::shared_ptr<HalfEdge<GeographicPoint>> edge;
@@ -45,7 +47,9 @@ private:
 
 struct SegmentComparator {
     bool operator()(const std::shared_ptr<Segment>& left, const std::shared_ptr<Segment>& right) const {
-        return left->getUpperEndpoint() == right->getUpperEndpoint() && left->getLowerEndpoint() == right->getLowerEndpoint();
+        if (left->getUpperEndpoint() == right->getUpperEndpoint())
+            return left->getLowerEndpoint() < right->getLowerEndpoint();
+        return left->getUpperEndpoint() < right->getUpperEndpoint();
     };
 };
 

@@ -8,7 +8,7 @@
 #pragma once
 
 #include <memory>
-#include <nlohmann/json.hpp>
+#include "json.hpp"
 #include <string>
 #include <vector>
 #include <fstream>
