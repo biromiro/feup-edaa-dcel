@@ -102,7 +102,7 @@ int LineSweep::findRightNeighborInStatusTree(std::vector<std::shared_ptr<Segment
 
 
 std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
-        const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges
+        std::shared_ptr<DCEL<GeographicPoint>>& dcel
         ) {
     std::vector<std::shared_ptr<Intersection>> intersections;
 
@@ -110,7 +110,7 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
     std::set<std::shared_ptr<Event>, EventComparator> events;
     std::vector<std::shared_ptr<Segment>> statusTree;
 
-    for (const auto& segment : edges) {
+    for (const auto& segment : dcel->getEdges()) {
         auto newEvent = std::make_shared<Event>(segment->getOrigin()->getValue());
 
         auto previousEventItr = events.find(newEvent);

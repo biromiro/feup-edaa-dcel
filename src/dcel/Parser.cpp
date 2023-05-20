@@ -40,11 +40,11 @@ std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> Parser::genGeographicPoi
             halfEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(currentVertex);
             halfEdge2 = std::make_shared<HalfEdge<GeographicPoint>>(nextVertex);
 
-            dcel->addEdge(halfEdge1);
-            dcel->addEdge(halfEdge2);
-
             halfEdge1->setTwin(halfEdge2);
             halfEdge2->setTwin(halfEdge1);
+
+            dcel->addEdge(halfEdge1);
+            dcel->addEdge(halfEdge2);
 
         } else if (!halfEdge1 || !halfEdge2) {
             throw std::invalid_argument("Edges should've been created already.");

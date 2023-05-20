@@ -46,7 +46,7 @@ public:
 
 
     static std::vector<std::shared_ptr<Intersection>> findIntersections(
-            const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges);
+            std::shared_ptr<DCEL<GeographicPoint>>& dcel);
 
     static void handleEventPoint(
             const std::shared_ptr<Event>& event,

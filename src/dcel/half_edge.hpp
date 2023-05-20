@@ -57,7 +57,13 @@ public:
 
   const std::shared_ptr<Face<T>> &getIncident() const { return incident; }
 
- private:
+    bool operator<(const HalfEdge &rhs) const {
+        if (this->origin == rhs.origin)
+            return this->twin->origin < rhs.twin->origin;
+        return this->origin < rhs.origin;
+    }
+
+private:
   std::shared_ptr<Vertex<T>> origin;
   std::shared_ptr<HalfEdge<T>> twin;
   std::shared_ptr<HalfEdge<T>> next;
