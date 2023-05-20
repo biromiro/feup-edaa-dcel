@@ -26,74 +26,72 @@ struct FaceComparator {
 
 template <class T>
 class DCEL {
-    public:
-        DCEL() {
-            this->vertices = std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>>();
-            this->edges = std::set<std::shared_ptr<HalfEdge<T>>>();
-            this->faces = std::set<std::shared_ptr<Face<T>>, FaceComparator<T>>();
-            this->unboundedFace = std::make_shared<Face<T>>();
-            this->faces.insert(this->unboundedFace);
-        };
+ public:
+  DCEL() {
+    this->vertices =
+        std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>>();
+    this->edges = std::set<std::shared_ptr<HalfEdge<T>>>();
+    this->faces = std::set<std::shared_ptr<Face<T>>, FaceComparator<T>>();
+    this->unboundedFace = std::make_shared<Face<T>>();
+    this->faces.insert(this->unboundedFace);
+  };
 
-        DCEL(DCEL<T> &&)  noexcept = default;
-        DCEL(const DCEL<T> &) = default;
-        DCEL &operator=(DCEL<T> &&) = default;
-        DCEL &operator=(const DCEL<T> &) = default;
+  std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> getFaces() {
+    return this->faces;
+  }
 
-          std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> getFaces() {
-            return this->faces;
-          }
-          std::set<std::shared_ptr<HalfEdge<T>>> getEdges() { return this->edges; }
-          std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>> getVertices() {
-            return this->vertices;
-          }
+  std::set<std::shared_ptr<HalfEdge<T>>> getEdges() { return this->edges; }
 
-          void addFace(std::shared_ptr<Face<T>> face) { this->faces.insert(face); }
+  std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>> getVertices() {
+    return this->vertices;
+  }
 
-          void addEdge(std::shared_ptr<HalfEdge<T>> edge) { this->edges.insert(edge); }
+  void addFace(std::shared_ptr<Face<T>> face) { this->faces.insert(face); }
 
-          void addVertex(std::shared_ptr<Vertex<T>> vertex) {
-            this->vertices.insert(vertex);
-          }
+  void addEdge(std::shared_ptr<HalfEdge<T>> edge) { this->edges.insert(edge); }
 
-          std::shared_ptr<Vertex<T>> getVertex(const T& val) {
-            auto value = vertices.find(std::make_shared<Vertex<T>>(val));
+  void addVertex(std::shared_ptr<Vertex<T>> vertex) {
+    this->vertices.insert(vertex);
+  }
 
-            return value == vertices.end() ? std::shared_ptr<Vertex<T>>(nullptr)
-                                           : (*value);
-          }
+  std::shared_ptr<Vertex<T>> getVertex(const T& val) {
+    auto value = vertices.find(std::make_shared<Vertex<T>>(val));
 
-          std::shared_ptr<HalfEdge<T>> getHalfEdge(
-              const std::shared_ptr<Vertex<T>>& orig,
-              const std::shared_ptr<Vertex<T>>& dest) {
-            auto edge = std::find_if(
-                edges.begin(), edges.end(),
-                [&orig, &dest](const std::shared_ptr<HalfEdge<T>>& hedge) {
-                  const std::shared_ptr<Vertex<T>>& originVertex = hedge->getOrigin();
-                  const std::shared_ptr<Vertex<T>>& destVertex =
-                      (hedge->getTwin())->getOrigin();
-                  return (originVertex.get() == orig.get()) &&
-                         (destVertex.get() == dest.get());
-                });
+    return value == vertices.end() ? std::shared_ptr<Vertex<T>>(nullptr)
+                                   : (*value);
+  }
 
-            return edge == edges.end() ? std::shared_ptr<HalfEdge<T>>(nullptr)
-                                       : (*edge);
-          }
+  std::shared_ptr<HalfEdge<T>> getHalfEdge(
+      const std::shared_ptr<Vertex<T>>& orig,
+      const std::shared_ptr<Vertex<T>>& dest) {
+    auto edge = std::find_if(
+        edges.begin(), edges.end(),
+        [&orig, &dest](const std::shared_ptr<HalfEdge<T>>& hedge) {
+          const std::shared_ptr<Vertex<T>>& originVertex = hedge->getOrigin();
+          const std::shared_ptr<Vertex<T>>& destVertex =
+              (hedge->getTwin())->getOrigin();
+          return (originVertex.get() == orig.get()) &&
+                 (destVertex.get() == dest.get());
+        });
 
-          std::shared_ptr<Face<T>> getFace(const nlohmann::json& property) {
-            auto value = faces.find(std::make_shared<Face<T>>(property));
+    return edge == edges.end() ? std::shared_ptr<HalfEdge<T>>(nullptr)
+                               : (*edge);
+  }
 
-            return value == vertices.end() ? std::shared_ptr<Face<T>>(nullptr)
-                                           : (*value);
-          }
+  std::shared_ptr<Face<T>> getFace(const nlohmann::json& property) {
+    auto value = faces.find(std::make_shared<Face<T>>(property));
 
-        const std::shared_ptr<Face<T>> &getUnboundedFace() const {
-            return unboundedFace;
-        }
+    return value == vertices.end() ? std::shared_ptr<Face<T>>(nullptr)
+                                   : (*value);
+  }
 
-    private:
-        std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> faces;
-        std::set<std::shared_ptr<HalfEdge<T>>> edges;
-        std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>> vertices;
-        std::shared_ptr<Face<T>> unboundedFace;
+  const std::shared_ptr<Face<T>>& getUnboundedFace() const {
+    return unboundedFace;
+  }
+
+ private:
+  std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> faces;
+  std::set<std::shared_ptr<HalfEdge<T>>> edges;
+  std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>> vertices;
+  std::shared_ptr<Face<T>> unboundedFace;
 };
