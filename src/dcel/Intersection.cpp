@@ -21,3 +21,11 @@ void Intersection::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edg
 const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &Intersection::getEdges() const {
     return edges;
 }
+
+const std::shared_ptr<HalfEdge<GeographicPoint>> &Intersection::getLeftEdge() const {
+    return leftEdge;
+}
+
+void Intersection::setLeftEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &leftEdge) {
+    Intersection::leftEdge = leftEdge;
+}

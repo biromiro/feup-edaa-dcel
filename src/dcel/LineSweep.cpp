@@ -129,7 +129,7 @@ std::vector<std::shared_ptr<Intersection>> LineSweep::findIntersections(
     }
 
     while (!eventQ.empty()) {
-        handleEventPoint(eventQ.top(), events, eventQ, intersections, statusTree);
+        handleEventPoint(eventQ.top(), events, eventQ, intersections, statusTree, dcel);
         eventQ.pop();
     }
 
@@ -140,7 +140,8 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
                                  std::set<std::shared_ptr<Event>, EventComparator>& events,
                                  std::priority_queue<std::shared_ptr<Event>, std::vector<std::shared_ptr<Event>>, EventComparator> &eventQ,
                                  std::vector<std::shared_ptr<Intersection>>& intersections,
-                                 std::vector<std::shared_ptr<Segment>> &statusTree) {
+                                 std::vector<std::shared_ptr<Segment>> &statusTree,
+                                 std::shared_ptr<DCEL<GeographicPoint>>& dcel) {
 
     auto endpoint = event->getEndpoint();
     const std::set<std::shared_ptr<Segment>, SegmentComparator>& upperSegments = event->getSegments();
@@ -167,6 +168,15 @@ void LineSweep::handleEventPoint(const std::shared_ptr<Event> &event,
         for (const auto& segment: intersectingSegments)
             intersection->addEdge(segment->getEdge());
         intersections.push_back(intersection);
+
+        for (auto itr = statusTree.begin(); itr != statusTree.end(); itr++) {
+            if ((*itr)->getSegmentCurrentLongitude(endpoint.getLatitude()) > endpoint.getLongitude()) {
+                if (itr != statusTree.begin()){
+                    auto leftSegment = *(itr - 1);
+                    intersection->setLeftEdge(leftSegment->getEdge());
+                }
+            }
+        }
     }
 
     removeFromStatusTree(statusTree, endpoint, lowerSegments);

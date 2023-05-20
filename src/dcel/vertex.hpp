@@ -25,7 +25,7 @@ class Vertex {
 
   std::shared_ptr<HalfEdge<T>> getIncident() { return this->incident; }
 
- private:
+private:
   T value;
   std::shared_ptr<HalfEdge<T>> incident;
 };

@@ -28,7 +28,7 @@ bool isClockwise(
 
 bool ccw (GeographicPoint p1, GeographicPoint p2, GeographicPoint p3) {
     return (p3.getLatitude()-p1.getLatitude()) * (p2.getLongitude()-p1.getLongitude()) >
-            (p2.getLatitude()-p1.getLatitude()) * (p3.getLongitude()-p1.getLongitude());
+           (p2.getLatitude()-p1.getLatitude()) * (p3.getLongitude()-p1.getLongitude());
 }
 
 bool edgesIntersect (

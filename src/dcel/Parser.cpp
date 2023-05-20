@@ -68,10 +68,10 @@ std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> Parser::genGeographicPoi
         edge2->setPrev(edge1);
     }
 
-    for (auto i = 0; i < halfEdges.size(); i++) {
-        auto edge1 = halfEdges.at(i);
-        auto edge2 = halfEdges.at((i + 1) % halfEdges.size());
-        auto edge3 = halfEdges.at((i + 2) % halfEdges.size());
+    for (auto i = 0; i < halfEdges2.size(); i++) {
+        auto edge1 = halfEdges2.at(i);
+        auto edge2 = halfEdges2.at((i + 1) % halfEdges2.size());
+        auto edge3 = halfEdges2.at((i + 2) % halfEdges2.size());
 
         if (!edge2->getNext()) {
             edge2->setNext(edge1);

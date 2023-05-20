@@ -53,7 +53,8 @@ public:
             std::set<std::shared_ptr<Event>, EventComparator>& events,
             std::priority_queue<std::shared_ptr<Event>, std::vector<std::shared_ptr<Event>>, EventComparator>& eventQ,
             std::vector<std::shared_ptr<Intersection>>& intersections,
-            std::vector<std::shared_ptr<Segment>>& statusTree
+            std::vector<std::shared_ptr<Segment>>& statusTree,
+            std::shared_ptr<DCEL<GeographicPoint>>& dcel
     );
 
     static void findNewEvent(
