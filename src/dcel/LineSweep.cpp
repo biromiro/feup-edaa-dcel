@@ -10,7 +10,7 @@
 //          although it would be a lot more efficient if we stood with half edge pointers
 
 struct StatusComparator {
-    StatusComparator(double currentSweepLine) { this->currentSweepLine = currentSweepLine - EPSILON; }
+    explicit StatusComparator(double currentSweepLine) { this->currentSweepLine = currentSweepLine - EPSILON; }
 
     bool operator () (const std::shared_ptr<Segment>& s1, const std::shared_ptr<Segment>& s2) {
         auto segment1Long = s1->getSegmentCurrentLongitude(currentSweepLine),
