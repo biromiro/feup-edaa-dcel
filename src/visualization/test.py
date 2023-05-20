@@ -1,4 +1,3 @@
 import dcel_binds
 
-print(dcel_binds.add(2, 7))
-print(dcel_binds.subtract(5, 3))
+dcel_binds.Parser.parseJSONtoDCEL("../../data/test-map-1.json")
