@@ -17,3 +17,7 @@ const GeographicPoint &Intersection::getIntersectionPoint() const {
 void Intersection::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge) {
     edges.insert(edge);
 }
+
+const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &Intersection::getEdges() const {
+    return edges;
+}
