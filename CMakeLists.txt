@@ -1,8 +1,19 @@
 cmake_minimum_required(VERSION 3.23)
 project(dcel)
 
-add_library(mymath STATIC src/dcel/math.cpp)
-set_target_properties(mymath PROPERTIES POSITION_INDEPENDENT_CODE ON)
+add_library(
+  parser STATIC
+  src/dcel/GeographicPoint.cpp
+  src/dcel/auxiliary.cpp
+  src/dcel/LineSweep.cpp
+  src/dcel/Event.cpp
+  src/dcel/Parser.cpp
+  src/dcel/Parser.h
+  src/dcel/Segment.cpp
+  src/dcel/Segment.h
+  src/dcel/Intersection.cpp
+  src/dcel/Intersection.h)
+set_target_properties(parser PROPERTIES POSITION_INDEPENDENT_CODE ON)
 
 add_subdirectory(pybind11)
 pybind11_add_module(dcel_binds src/dcel/wrap.cpp)
@@ -27,4 +38,4 @@ add_executable(
   src/dcel/Intersection.cpp
   src/dcel/Intersection.h)
 
-target_link_libraries(dcel_binds PRIVATE mymath)
+target_link_libraries(dcel_binds PRIVATE parser)
