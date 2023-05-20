@@ -16,15 +16,11 @@ make "$MAKE_TARGET"
 
 printf '\n\n%s\n\n' "Built C++ shared object, now going to build the wheel file"
 
-sleep 2
-
 # Go back into the root and run setup.py
 cd ..
 python3 setup.py bdist_wheel
 
 printf '\n\n%s\n\n' "Built wheel file, now installing into python venv"
-
-sleep 2
 
 cd "$PYTHON_DIR" || exit 255
 
