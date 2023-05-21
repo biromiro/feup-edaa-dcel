@@ -9,18 +9,25 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(
   ${PROJECT_NAME}
-  src/dcel/main.cpp
-  src/dcel/GeographicPoint.cpp
-  src/dcel/auxiliary.cpp
-  src/dcel/LineSweep.cpp
-  src/dcel/Event.cpp
-  src/dcel/Parser.cpp
-  src/dcel/Parser.h
-  src/dcel/Segment.cpp
-  src/dcel/Segment.h
-  src/dcel/Intersection.cpp
-  src/dcel/Intersection.h
-  src/dcel/MapOverlay.cpp
-  src/dcel/MapOverlay.h)
+  src/main.cpp
+  src/dcel/json.hpp
+  src/dcel/dcel.tpp
+  src/dcel/dcel_substructures/Face.tpp
+  src/dcel/dcel_substructures/HalfEdge.tpp
+  src/dcel/dcel_substructures/Vertex.tpp
+  src/dcel/auxiliary/Auxiliary.cpp
+  src/dcel/auxiliary/parser/Parser.cpp
+  src/dcel/auxiliary/geographic_point/GeographicPoint.cpp
+  src/dcel/auxiliary/cycle_graph/Cycle.cpp
+  src/dcel/auxiliary/cycle_graph/connectivity/Connectivity.tpp
+  src/dcel/auxiliary/cycle_graph/auxiliary/Edge.tpp
+  src/dcel/auxiliary/cycle_graph/auxiliary/Graph.tpp
+  src/dcel/auxiliary/cycle_graph/auxiliary/Node.tpp
+  src/dcel/algorithms/map_overlay/MapOverlay.cpp
+  src/dcel/algorithms/line_sweep/LineSweep.cpp
+  src/dcel/algorithms/line_sweep/segment/Segment.cpp
+  src/dcel/algorithms/line_sweep/intersection/Intersection.cpp
+  src/dcel/algorithms/line_sweep/event/Event.cpp
+  src/visualization/Visualization.cpp)
 
 target_link_libraries(${PROJECT_NAME} PUBLIC matplot)
