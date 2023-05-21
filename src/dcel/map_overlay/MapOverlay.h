@@ -6,7 +6,7 @@
 #define DCEL_MAPOVERLAY_H
 
 
-#include "LineSweep.h"
+#include "../line_sweep/LineSweep.h"
 
 class MapOverlay {
 public:

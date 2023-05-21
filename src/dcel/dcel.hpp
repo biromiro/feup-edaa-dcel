@@ -5,9 +5,9 @@
 #include <set>
 #include <vector>
 
-#include "./face.hpp"
-#include "./vertex.hpp"
-#include "GeographicPoint.h"
+#include "dcel_substructures/Face.hpp"
+#include "dcel_substructures/Vertex.hpp"
+#include "auxiliary/geographic_point/GeographicPoint.h"
 template <class T>
 struct VertexComparator {
   bool operator()(const std::shared_ptr<Vertex<T>> lhs,

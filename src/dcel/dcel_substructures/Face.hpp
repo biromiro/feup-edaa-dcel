@@ -2,12 +2,12 @@
 #pragma once
 
 #include <memory>
-#include "json.hpp"
+#include "../json.hpp"
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "./vertex.hpp"
+#include "./Vertex.hpp"
 
 template <class T>
 class Face {

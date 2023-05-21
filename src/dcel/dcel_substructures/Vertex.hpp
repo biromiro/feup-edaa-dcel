@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "./half_edge.hpp"
+#include "./HalfEdge.hpp"
 
 template <class T>
 class Vertex {

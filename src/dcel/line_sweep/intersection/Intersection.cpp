@@ -27,10 +27,10 @@ const std::set<std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared
     return edgePairs;
 }
 
-const std::shared_ptr<HalfEdge<GeographicPoint>> &Intersection::getLeftEdge() const {
+const std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared_ptr<HalfEdge<GeographicPoint>>> &Intersection::getLeftEdge() const {
     return leftEdge;
 }
 
 void Intersection::setLeftEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &leftEdge) {
-    Intersection::leftEdge = leftEdge;
+    this->leftEdge = std::make_pair(leftEdge, leftEdge->getTwin());
 }

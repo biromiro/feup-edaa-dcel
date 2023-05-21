@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include <iostream>
-#include "./auxiliary.h"
+#include "./Auxiliary.h"
 
 using json = nlohmann::json;
 

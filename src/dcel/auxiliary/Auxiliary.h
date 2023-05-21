@@ -1,12 +1,12 @@
 #pragma once
 
 #include <memory>
-#include "json.hpp"
+#include "../json.hpp"
 #include <string>
 #include <vector>
 
-#include "./dcel.hpp"
-#include "./half_edge.hpp"
+#include "../dcel.hpp"
+#include "../dcel_substructures/HalfEdge.hpp"
 
 #define EPSILON 1E-10
 

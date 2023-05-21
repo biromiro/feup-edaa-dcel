@@ -1,9 +1,8 @@
 // Copyright 2023 EDAA Group C
 #include <iostream>
 
-#include "Parser.h"
-#include "LineSweep.h"
-#include "MapOverlay.h"
+#include "auxiliary/parser/Parser.h"
+#include "map_overlay/MapOverlay.h"
 
 int main() {
     const auto dcel1 = Parser::parseJSONtoDCEL("test-map-10.json");
