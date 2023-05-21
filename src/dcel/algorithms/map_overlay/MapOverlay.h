@@ -6,12 +6,17 @@
 #define DCEL_MAPOVERLAY_H
 
 
-#include "LineSweep.h"
+#include "../line_sweep/LineSweep.h"
 
 class MapOverlay {
 public:
     static std::shared_ptr<DCEL<GeographicPoint>> overlayDCELs(const std::shared_ptr<DCEL<GeographicPoint>>& dcel1,
                                                                const std::shared_ptr<DCEL<GeographicPoint>>& dcel2);
+
+    static std::shared_ptr<DCEL<GeographicPoint>> mergeDCELs(const std::shared_ptr<DCEL<GeographicPoint>> &dcel1,
+                              const std::shared_ptr<DCEL<GeographicPoint>> &dcel2);
+
+    static void generateFaces(std::shared_ptr<DCEL<GeographicPoint>>& dcel);
 
     static void cyclicOrderingOfEdges(
                 GeographicPoint intersectionPoint,

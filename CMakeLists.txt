@@ -5,8 +5,6 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 add_subdirectory(matplotplusplus)
 
-# find_package(nlohmann_json REQUIRED)
-
 set(CMAKE_CXX_STANDARD 20)
 
 add_executable(
@@ -24,5 +22,5 @@ add_executable(
   src/dcel/Intersection.h
   src/dcel/MapOverlay.cpp
   src/dcel/MapOverlay.h)
-# target_link_libraries(${PROJECT_NAME} nlohmann_json::nlohmann_json)
+
 target_link_libraries(${PROJECT_NAME} PUBLIC matplot)

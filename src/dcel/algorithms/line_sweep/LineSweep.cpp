@@ -4,7 +4,7 @@
 
 #include <vector>
 
-#include "GeographicPoint.h"
+#include "../../auxiliary/geographic_point/GeographicPoint.h"
 
 // TODO(): This logic should follow the endpoint of an edge - might be better to use an alternative structure
 //          although it would be a lot more efficient if we stood with half edge pointers

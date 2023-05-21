@@ -4,7 +4,7 @@
 
 #include <cmath>
 #include <iostream>
-#include "./auxiliary.h"
+#include "./Auxiliary.h"
 
 using json = nlohmann::json;
 
@@ -24,6 +24,14 @@ bool isClockwise(
                    (nextPoint.getLongitude() + currentPoint.getLongitude());
   }
   return accumulator > 0;
+}
+
+double distance(GeographicPoint a, GeographicPoint b){
+    return std::sqrt(std::pow((a.getLongitude() - b.getLongitude()), 2) + std::pow((a.getLatitude() - b.getLatitude()),2));
+}
+
+bool isBetween(GeographicPoint a, GeographicPoint c, GeographicPoint b){
+    return std::abs(distance(a,c) + distance(c,b) - distance(a,b)) < EPSILON;
 }
 
 bool ccw (GeographicPoint p1, GeographicPoint p2, GeographicPoint p3) {

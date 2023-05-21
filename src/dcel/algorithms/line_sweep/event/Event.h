@@ -6,11 +6,11 @@
 #define DCEL_EVENT_H
 
 #include <iostream>
-#include "./half_edge.hpp"
-#include "./vertex.hpp"
-#include "auxiliary.h"
-#include "GeographicPoint.h"
-#include "Segment.h"
+#include "../../../dcel_substructures/HalfEdge.tpp"
+#include "../../../dcel_substructures/Vertex.tpp"
+#include "../../../auxiliary/Auxiliary.h"
+#include "../../../auxiliary/geographic_point/GeographicPoint.h"
+#include "../segment/Segment.h"
 
 // TODO: Should store the endpoint and have a function that returns a ordered value or overload operator
 //       to order events

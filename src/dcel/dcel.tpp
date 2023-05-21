@@ -5,9 +5,9 @@
 #include <set>
 #include <vector>
 
-#include "./face.hpp"
-#include "./vertex.hpp"
-#include "GeographicPoint.h"
+#include "dcel_substructures/Face.tpp"
+#include "dcel_substructures/Vertex.tpp"
+#include "auxiliary/geographic_point/GeographicPoint.h"
 template <class T>
 struct VertexComparator {
   bool operator()(const std::shared_ptr<Vertex<T>> lhs,
@@ -25,20 +25,12 @@ struct EdgeComparator {
 };
 
 template <class T>
-struct FaceComparator {
-  bool operator()(const std::shared_ptr<Face<T>> lhs,
-                  const std::shared_ptr<Face<T>> rhs) const {
-    return *lhs < *rhs;
-  }
-};
-
-template <class T>
 class DCEL {
     public:
         DCEL() {
             this->vertices = std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>>();
             this->edges = std::set<std::shared_ptr<HalfEdge<T>>, EdgeComparator<T>>();
-            this->faces = std::set<std::shared_ptr<Face<T>>, FaceComparator<T>>();
+            this->faces = std::set<std::shared_ptr<Face<T>>>();
             this->unboundedFace = std::make_shared<Face<T>>();
             this->faces.insert(this->unboundedFace);
         };
@@ -47,7 +39,7 @@ class DCEL {
              std::set<std::shared_ptr<HalfEdge<T>>, EdgeComparator<T>> edges) {
             this->vertices = vertices;
             this->edges = edges;
-            this->faces = std::set<std::shared_ptr<Face<T>>, FaceComparator<T>>();
+            this->faces = std::set<std::shared_ptr<Face<T>>>();
             this->unboundedFace = std::make_shared<Face<T>>();
             this->faces.insert(this->unboundedFace);
         }
@@ -57,7 +49,7 @@ class DCEL {
         DCEL &operator=(DCEL<T> &&) = default;
         DCEL &operator=(const DCEL<T> &) = default;
 
-          std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> getFaces() {
+          std::set<std::shared_ptr<Face<T>>> getFaces() {
             return this->faces;
           }
           std::set<std::shared_ptr<HalfEdge<T>>, EdgeComparator<T>> getEdges() { return this->edges; }
@@ -108,8 +100,17 @@ class DCEL {
             return unboundedFace;
         }
 
-    private:
-        std::set<std::shared_ptr<Face<T>>, FaceComparator<T>> faces;
+    void setUnboundedFace(const std::shared_ptr<Face<T>> &unboundedFace) {
+        DCEL::unboundedFace = unboundedFace;
+    }
+
+    void removeUnboundedFace() {
+          faces.erase(unboundedFace);
+          unboundedFace = nullptr;
+      }
+
+private:
+        std::set<std::shared_ptr<Face<T>>> faces;
         std::set<std::shared_ptr<HalfEdge<T>>, EdgeComparator<T>> edges;
         std::set<std::shared_ptr<Vertex<T>>, VertexComparator<T>> vertices;
         std::shared_ptr<Face<T>> unboundedFace;

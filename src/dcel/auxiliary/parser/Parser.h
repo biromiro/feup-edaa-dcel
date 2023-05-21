@@ -8,16 +8,16 @@
 #pragma once
 
 #include <memory>
-#include "json.hpp"
+#include "../../json.hpp"
 #include <string>
 #include <vector>
 #include <fstream>
 #include <iostream>
 
-#include "./dcel.hpp"
-#include "./half_edge.hpp"
-#include "auxiliary.h"
-#include "GeographicPoint.h"
+#include "../../dcel.tpp"
+#include "../../dcel_substructures/HalfEdge.tpp"
+#include "../Auxiliary.h"
+#include "../geographic_point/GeographicPoint.h"
 
 using json = nlohmann::json;
 

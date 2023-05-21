@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "./half_edge.hpp"
+#include "./HalfEdge.tpp"
 
 template <class T>
 class Vertex {
@@ -25,7 +25,16 @@ class Vertex {
 
   std::shared_ptr<HalfEdge<T>> getIncident() { return this->incident; }
 
+    const std::pair<std::shared_ptr<HalfEdge<T>>, std::shared_ptr<HalfEdge<T>>> &getLeftEdge() const {
+        return leftEdge;
+    }
+
+    void setLeftEdge(const std::pair<std::shared_ptr<HalfEdge<T>>, std::shared_ptr<HalfEdge<T>>> &leftEdge) {
+        Vertex::leftEdge = leftEdge;
+    }
+
 private:
   T value;
   std::shared_ptr<HalfEdge<T>> incident;
+  std::pair<std::shared_ptr<HalfEdge<T>>, std::shared_ptr<HalfEdge<T>>> leftEdge;
 };

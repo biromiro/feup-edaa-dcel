@@ -2,12 +2,12 @@
 #pragma once
 
 #include <memory>
-#include "json.hpp"
+#include "../json.hpp"
 #include <set>
 #include <utility>
 #include <vector>
 
-#include "./vertex.hpp"
+#include "./Vertex.tpp"
 
 template <class T>
 class Face {
@@ -26,6 +26,10 @@ class Face {
 
   void setOuter(const std::shared_ptr<HalfEdge<T>> &outer_) {
     this->outer = outer_;
+  }
+
+  void addInner(const std::shared_ptr<HalfEdge<T>>& edge) {
+      inner.insert(edge);
   }
 
   bool operator<(const Face &rhs) const {
