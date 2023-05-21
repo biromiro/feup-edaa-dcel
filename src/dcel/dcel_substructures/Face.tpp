@@ -39,8 +39,21 @@ class Face {
   }
 
   void addProperty(nlohmann::json newProperty) {
-      if (!newProperty.is_null())
-        property.insert(newProperty.begin(), newProperty.end());
+      if (!newProperty.is_null()){
+          for (nlohmann::json::iterator it = newProperty.begin(); it != newProperty.end(); ++it) {
+              auto key = it.key(); auto value = it.value();
+              if (!property[key].is_null()) {
+                  if (property[key].is_array()) {
+                      property[key].push_back(value);
+                  } else {
+                      nlohmann::json arr;
+                      arr.push_back(value);
+                      arr.push_back(property[key]);
+                      property[key] = arr;
+                  }
+              } else property[key] = value;
+          }
+      }
   }
  private:
   nlohmann::json property;

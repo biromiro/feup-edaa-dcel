@@ -10,8 +10,8 @@
 #include "visualization/Visualization.h"
 
 int main() {
-  const auto dcel1 = Parser::parseJSONtoDCEL("test-map-1.json");
-  const auto dcel2 = Parser::parseJSONtoDCEL("test-map-2.json");
+  const auto dcel1 = Parser::parseJSONtoDCEL("../data/test-map-1.json");
+  const auto dcel2 = Parser::parseJSONtoDCEL("../data/test-map-2.json");
   // const auto dcel3 = Parser::parseJSONtoDCEL("test-map-12.json");
 
   auto dcel = MapOverlay::overlayDCELs(dcel1, dcel2);
