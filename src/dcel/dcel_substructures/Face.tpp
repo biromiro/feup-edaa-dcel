@@ -7,7 +7,7 @@
 #include <utility>
 #include <vector>
 
-#include "./Vertex.hpp"
+#include "./Vertex.tpp"
 
 template <class T>
 class Face {
@@ -26,6 +26,10 @@ class Face {
 
   void setOuter(const std::shared_ptr<HalfEdge<T>> &outer_) {
     this->outer = outer_;
+  }
+
+  void addInner(const std::shared_ptr<HalfEdge<T>>& edge) {
+      inner.insert(edge);
   }
 
   bool operator<(const Face &rhs) const {

@@ -5,7 +5,7 @@
 #include <queue>
 #include <vector>
 
-#include "../../dcel_substructures/HalfEdge.hpp"
+#include "../../dcel_substructures/HalfEdge.tpp"
 #include "intersection/Intersection.h"
 #include "../../auxiliary/Auxiliary.h"
 #include "../../auxiliary/geographic_point/GeographicPoint.h"

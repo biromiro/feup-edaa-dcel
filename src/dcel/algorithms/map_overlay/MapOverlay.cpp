@@ -3,6 +3,9 @@
 //
 
 #include "MapOverlay.h"
+#include "../../auxiliary/cycle_graph/Cycle.h"
+#include "../../auxiliary/cycle_graph/auxiliary/Graph.tpp"
+#include "../../auxiliary/cycle_graph/connectivity/Connectivity.tpp"
 
 std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::overlayDCELs(const std::shared_ptr<DCEL<GeographicPoint>> &dcel1,
                                                                 const std::shared_ptr<DCEL<GeographicPoint>> &dcel2) {
@@ -92,6 +95,8 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
 
         if (vertexDCEL) {
+            vertexDCEL->setLeftEdge(intersection->getLeftEdge());
+
             std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> cyclicOrder;
             std::shared_ptr<HalfEdge<GeographicPoint>> halfEdge;
 
@@ -135,13 +140,6 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
             cyclicOrderingOfEdges(intersectionPoint, cyclicOrder);
 
-            std::cout << "Handling the intersection at " << intersection->getIntersectionPoint() << std::endl;
-            std::cout << "Clockwise order around the intersection point is:" << std::endl;
-            for (const auto& edge: cyclicOrder)
-                std::cout << "Edge from " << edge->getOrigin()->getValue() << " to " << edge->getTwin()->getOrigin()->getValue() << std::endl;
-
-            std::cout << std::endl;
-
             int idx = std::distance(
                     cyclicOrder.begin(),
                     std::find(cyclicOrder.begin(), cyclicOrder.end(), halfEdge)
@@ -176,12 +174,12 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
         } else {
             auto vertex = std::make_shared<Vertex<GeographicPoint>>(intersectionPoint);
+            vertex->setLeftEdge(intersection->getLeftEdge());
+
             resultingDCEL->addVertex(vertex);
 
             std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> cyclicOrder;
             std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> newEdges;
-
-            std::cout << "Showing the intersection edges" << std::endl;
 
             for (const auto& edgePair: intersection->getEdgePairs()) {
 
@@ -193,7 +191,6 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
                 else edge = second;
 
                 auto twinEdge = edge->getTwin();
-                std::cout << "Edge from " << edge->getOrigin()->getValue() << " to " << twinEdge->getOrigin()->getValue() << std::endl;
                           // create two new half edges
                 auto newEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(),
                         newEdge2 = std::make_shared<HalfEdge<GeographicPoint>>();
@@ -227,13 +224,6 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
             cyclicOrderingOfEdges(intersectionPoint, cyclicOrder);
 
-            std::cout << "Handling the intersection at " << intersection->getIntersectionPoint() << std::endl;
-            std::cout << "Clockwise order around the intersection point is:" << std::endl;
-            for (const auto& edge: cyclicOrder)
-                std::cout << "Edge from " << edge->getOrigin()->getValue() << " to " << edge->getTwin()->getOrigin()->getValue() << std::endl;
-
-            std::cout << std::endl;
-
             for (const auto& newEdge: newEdges) {
                 int idx = std::distance(
                         cyclicOrder.begin(),
@@ -249,32 +239,122 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
     return resultingDCEL;
 }
 
+
 void MapOverlay::generateFaces(std::shared_ptr<DCEL<GeographicPoint>> &dcel) {
 
-    auto visitedSet = std::map<std::shared_ptr<HalfEdge<GeographicPoint>>, bool>();
+    auto visitedSet = std::map<std::shared_ptr<HalfEdge<GeographicPoint>>, size_t>();
     for (const auto& edge: dcel->getEdges())
-        visitedSet.insert(std::make_pair(edge, false));
+        visitedSet.insert(std::make_pair(edge, 0));
 
 
-    auto cycles = std::vector<std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>>();
+    auto cycles = std::vector<Cycle>();
+    size_t cycleNum = 1;
 
-    for (const auto& edge: visitedSet) {
-        if (edge.second) continue;
-        auto cycle = std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>();
+    for (auto& edge: visitedSet) {
+        if (edge.second != 0) continue;
+        auto cycle = Cycle();
 
         auto current = edge.first;
 
         do {
-            cycle.push_back(current);
+            cycle.addEdgeToCycle(current);
             auto itr = visitedSet.find(current);
             if (itr->second) {
                 std::cout << "did not cycle" << std::endl; break;
             }
-            itr->second = true;
+            itr->second = cycleNum;
             current = current->getNext();
         } while (current != edge.first);
 
         cycles.push_back(cycle);
+        cycleNum++;
+    }
+
+    cycleNum = 1;
+    auto cycleGraph = Graph<Cycle>();
+    auto unboundedFaceCycle = Cycle(true);
+
+    cycleGraph.addNode(cycleNum, unboundedFaceCycle);
+    unboundedFaceCycle.setID(cycleNum++);
+
+    dcel->removeUnboundedFace();
+
+    for (auto& cycle: cycles) {
+        cycleGraph.addNode(cycleNum, cycle);
+        cycle.setID(cycleNum++);
+    }
+    for (auto& cycle: cycles) {
+        if (!cycle.isBoundaryCycle()) {
+            auto leftmostVertex = cycle.getLeftmostVertex();
+            auto leftEdge = leftmostVertex->getLeftEdge();
+            std::vector<Segment> validSegments;
+            if (leftEdge.first) validSegments.emplace_back(leftEdge.first);
+            if (leftEdge.second) validSegments.emplace_back(leftEdge.second);
+
+            auto it = std::begin(validSegments);
+            for (; it != std::end(validSegments); ++it){
+                if (approximatelyEqual(it->getSegmentCurrentLongitude(leftmostVertex->getValue().getLatitude()),
+                                       leftmostVertex->getValue().getLongitude()))
+                    break;
+            }
+
+            if(it != std::end(validSegments)){
+                auto edge = it->getEdge();
+                auto containingCycle = std::find_if(
+                        cycles.begin(), cycles.end(), [edge](const Cycle& cycle) {
+                            return std::find(cycle.getCycle().begin(), cycle.getCycle().end(), edge) != cycle.getCycle().end();
+                        });
+                cycleGraph.addEdge(containingCycle->getID(), cycle.getID());
+            } else {
+                cycleGraph.addEdge(unboundedFaceCycle.getID(), cycle.getID());
+            }
+        }
+    }
+
+    auto connectivity = Connectivity<Cycle>(cycleGraph);
+    std::cout << "Has " << connectivity.getNumConnectedComponents() << " connected components." << std::endl;
+    std::map<int, std::vector<Cycle>> connectedComponents{};
+
+    for (const auto& node: cycleGraph.getNodeSet()) {
+        std::cout << node.second->getSCCSID() << std::endl;
+        if (connectedComponents.find(node.second->getSCCSID()) == connectedComponents.end()) {
+            auto vec = std::vector<Cycle>();
+            vec.push_back(node.second->getInfo());
+            connectedComponents.insert(std::make_pair(
+                    node.second->getSCCSID(), vec)
+                    );
+        } else connectedComponents.find(node.second->getSCCSID())->second.push_back(node.second->getInfo());
+    }
+
+    for (const auto& connectedComponent: connectedComponents) {
+        Cycle boundaryCycle;
+        std::vector<Cycle> holeCycles;
+
+        for (const auto& cycle: connectedComponent.second) {
+            if (cycle.isBoundaryCycle() || cycle.isUnboundedCycle()){
+                boundaryCycle = cycle;
+            } else holeCycles.push_back(cycle);
+        }
+
+        auto face = std::make_shared<Face<GeographicPoint>>();
+
+        if (!boundaryCycle.isUnboundedCycle())
+            face->setOuter(boundaryCycle.getCycle().front());
+
+        for (const auto& hole: holeCycles) {
+            face->addInner(hole.getCycle().front());
+        }
+
+        for (const auto& edge: boundaryCycle.getCycle())
+            edge->setIncident(face);
+
+        for (const auto& hole: holeCycles)
+            for (const auto& edge: hole.getCycle())
+                edge->setIncident(face);
+
+        dcel->addFace(face);
+        if (boundaryCycle.isUnboundedCycle())
+            dcel->setUnboundedFace(face);
     }
 
     std::cout << "Found " << cycles.size() << " cycles." << std::endl;

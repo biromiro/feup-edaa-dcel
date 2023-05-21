@@ -5,8 +5,8 @@
 #include <string>
 #include <vector>
 
-#include "../dcel.hpp"
-#include "../dcel_substructures/HalfEdge.hpp"
+#include "../dcel.tpp"
+#include "../dcel_substructures/HalfEdge.tpp"
 
 #define EPSILON 1E-10
 

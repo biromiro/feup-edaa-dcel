@@ -6,8 +6,8 @@
 #define DCEL_SEGMENT_H
 
 #include <iostream>
-#include "../../../dcel_substructures/HalfEdge.hpp"
-#include "../../../dcel_substructures/Vertex.hpp"
+#include "../../../dcel_substructures/HalfEdge.tpp"
+#include "../../../dcel_substructures/Vertex.tpp"
 #include "../../../auxiliary/Auxiliary.h"
 #include "../../../auxiliary/geographic_point/GeographicPoint.h"
 

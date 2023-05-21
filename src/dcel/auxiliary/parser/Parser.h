@@ -14,8 +14,8 @@
 #include <fstream>
 #include <iostream>
 
-#include "../../dcel.hpp"
-#include "../../dcel_substructures/HalfEdge.hpp"
+#include "../../dcel.tpp"
+#include "../../dcel_substructures/HalfEdge.tpp"
 #include "../Auxiliary.h"
 #include "../geographic_point/GeographicPoint.h"
 
