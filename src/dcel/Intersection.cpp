@@ -16,10 +16,15 @@ const GeographicPoint &Intersection::getIntersectionPoint() const {
 
 void Intersection::addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge) {
     edges.insert(edge);
+    edgePairs.insert(std::make_pair(edge, edge->getTwin()));
 }
 
 const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &Intersection::getEdges() const {
     return edges;
+}
+
+const std::set<std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared_ptr<HalfEdge<GeographicPoint>>>> &Intersection::getEdgePairs() const {
+    return edgePairs;
 }
 
 const std::shared_ptr<HalfEdge<GeographicPoint>> &Intersection::getLeftEdge() const {

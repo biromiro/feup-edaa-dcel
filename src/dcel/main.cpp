@@ -6,8 +6,8 @@
 #include "MapOverlay.h"
 
 int main() {
-    const auto dcel1 = Parser::parseJSONtoDCEL("test-map-5.json");
-    const auto dcel2 = Parser::parseJSONtoDCEL("test-map-6.json");
+    const auto dcel1 = Parser::parseJSONtoDCEL("test-map-10.json");
+    const auto dcel2 = Parser::parseJSONtoDCEL("test-map-11.json");
 
     auto dcel = MapOverlay::overlayDCELs(dcel1, dcel2);
 

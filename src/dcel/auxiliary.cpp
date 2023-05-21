@@ -26,6 +26,14 @@ bool isClockwise(
   return accumulator > 0;
 }
 
+double distance(GeographicPoint a, GeographicPoint b){
+    return std::sqrt(std::pow((a.getLongitude() - b.getLongitude()), 2) + std::pow((a.getLatitude() - b.getLatitude()),2));
+}
+
+bool isBetween(GeographicPoint a, GeographicPoint c, GeographicPoint b){
+    return std::abs(distance(a,c) + distance(c,b) - distance(a,b)) < EPSILON;
+}
+
 bool ccw (GeographicPoint p1, GeographicPoint p2, GeographicPoint p3) {
     return (p3.getLatitude()-p1.getLatitude()) * (p2.getLongitude()-p1.getLongitude()) >
            (p2.getLatitude()-p1.getLatitude()) * (p3.getLongitude()-p1.getLongitude());

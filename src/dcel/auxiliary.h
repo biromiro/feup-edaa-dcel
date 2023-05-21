@@ -19,6 +19,9 @@ bool approximatelyEqual(double a, double b);
 bool isClockwise(
     const std::vector<std::shared_ptr<Vertex<GeographicPoint>>>& vertices);
 
+double distance(GeographicPoint a, GeographicPoint b);
+
+bool isBetween(GeographicPoint a, GeographicPoint c, GeographicPoint b);
 
 bool edgesIntersect (
         const std::shared_ptr<HalfEdge<GeographicPoint>>& edge1,

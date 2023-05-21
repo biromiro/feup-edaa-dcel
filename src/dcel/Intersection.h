@@ -18,15 +18,18 @@ public:
 
     void addEdge(const std::shared_ptr<HalfEdge<GeographicPoint>>& edge);
 
-    const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &getEdges() const;
+    [[nodiscard]] const std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> &getEdges() const;
 
-    const std::shared_ptr<HalfEdge<GeographicPoint>> &getLeftEdge() const;
+    [[nodiscard]] const std::set<std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared_ptr<HalfEdge<GeographicPoint>>>> &getEdgePairs() const;
+
+    [[nodiscard]] const std::shared_ptr<HalfEdge<GeographicPoint>> &getLeftEdge() const;
 
     void setLeftEdge(const std::shared_ptr<HalfEdge<GeographicPoint>> &leftEdge);
 
 private:
     GeographicPoint intersectionPoint;
     std::set<std::shared_ptr<HalfEdge<GeographicPoint>>> edges;
+    std::set<std::pair<std::shared_ptr<HalfEdge<GeographicPoint>>, std::shared_ptr<HalfEdge<GeographicPoint>>>> edgePairs;
     std::shared_ptr<HalfEdge<GeographicPoint>> leftEdge;
 };
 
