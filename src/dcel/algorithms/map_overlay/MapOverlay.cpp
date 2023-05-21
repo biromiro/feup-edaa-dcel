@@ -136,6 +136,9 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
             twinEdge->getNext()->setPrev(newEdge1);
             halfEdge->getNext()->setPrev(newEdge2);
 
+            newEdge1->setIncident(twinEdge->getIncident());
+            newEdge2->setIncident(halfEdge->getIncident());
+
             cyclicOrder.push_back(newEdge1); cyclicOrder.push_back(newEdge2);
 
             cyclicOrderingOfEdges(intersectionPoint, cyclicOrder);
@@ -212,6 +215,9 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
                 twinEdge->getNext()->setPrev(newEdge1);
                 edge->getNext()->setPrev(newEdge2);
+
+                newEdge1->setIncident(twinEdge->getIncident());
+                newEdge2->setIncident(edge->getIncident());
 
                 cyclicOrder.push_back(edge);
                 cyclicOrder.push_back(twinEdge);
@@ -312,11 +318,10 @@ void MapOverlay::generateFaces(std::shared_ptr<DCEL<GeographicPoint>> &dcel) {
     }
 
     auto connectivity = Connectivity<Cycle>(cycleGraph);
-    std::cout << "Has " << connectivity.getNumConnectedComponents() << " connected components." << std::endl;
+    connectivity.calculateTarjan();
     std::map<int, std::vector<Cycle>> connectedComponents{};
 
     for (const auto& node: cycleGraph.getNodeSet()) {
-        std::cout << node.second->getSCCSID() << std::endl;
         if (connectedComponents.find(node.second->getSCCSID()) == connectedComponents.end()) {
             auto vec = std::vector<Cycle>();
             vec.push_back(node.second->getInfo());
@@ -338,8 +343,14 @@ void MapOverlay::generateFaces(std::shared_ptr<DCEL<GeographicPoint>> &dcel) {
 
         auto face = std::make_shared<Face<GeographicPoint>>();
 
-        if (!boundaryCycle.isUnboundedCycle())
+        if (!boundaryCycle.isUnboundedCycle()) {
             face->setOuter(boundaryCycle.getCycle().front());
+            for (const auto& oldFace: boundaryCycle.getFaces()){
+                if (!oldFace) continue;
+                auto property = oldFace->getProperty();
+                face->addProperty(property);
+            }
+        }
 
         for (const auto& hole: holeCycles) {
             face->addInner(hole.getCycle().front());
@@ -356,8 +367,5 @@ void MapOverlay::generateFaces(std::shared_ptr<DCEL<GeographicPoint>> &dcel) {
         if (boundaryCycle.isUnboundedCycle())
             dcel->setUnboundedFace(face);
     }
-
-    std::cout << "Found " << cycles.size() << " cycles." << std::endl;
-
 }
 

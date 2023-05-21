@@ -7,6 +7,9 @@
 
 
 #include "../line_sweep/LineSweep.h"
+#include "../../json.hpp"
+
+using json = nlohmann::json;
 
 class MapOverlay {
 public:

@@ -12,29 +12,16 @@ template <class T>
 class Connectivity {
 public:
     explicit Connectivity(Graph<T>& graph);
-    bool isConnected();
-    int getNumConnectedComponents();
+    bool calculateTarjan();
 private:
     int sccs = -1;
     Graph<T> currentGraph;
-    bool calculateTarjan();
     void dfs(int& currentID, Node<T> *node, std::stack<Node<T>*>& stack);
 };
 
 template<class T>
 Connectivity<T>::Connectivity(Graph<T> &graph) {
     this->currentGraph = graph;
-}
-
-template<class T>
-bool Connectivity<T>::isConnected() {
-    return calculateTarjan();
-}
-
-template<class T>
-int Connectivity<T>::getNumConnectedComponents() {
-    if(sccs == -1) calculateTarjan();
-    return sccs;
 }
 
 template<class T>

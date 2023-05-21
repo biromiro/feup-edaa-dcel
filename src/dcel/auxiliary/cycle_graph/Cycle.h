@@ -23,6 +23,7 @@ public:
     bool isUnboundedCycle() const;
     size_t getID() const;
     void setID(size_t id);
+    std::set<std::shared_ptr<Face<GeographicPoint>>> getFaces();
 private:
     size_t id;
     std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>> cycleVec;

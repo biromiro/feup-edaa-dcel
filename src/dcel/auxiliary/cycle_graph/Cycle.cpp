@@ -57,3 +57,10 @@ size_t Cycle::getID() const {
 bool Cycle::isUnboundedCycle() const{
     return unboundedCycle;
 }
+
+std::set<std::shared_ptr<Face<GeographicPoint>>> Cycle::getFaces() {
+    std::set<std::shared_ptr<Face<GeographicPoint>>> faces;
+    for (const auto& edge: cycleVec)
+        faces.insert(edge->getIncident());
+    return faces;
+}

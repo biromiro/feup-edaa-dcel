@@ -12,7 +12,7 @@
 template <class T>
 class Face {
  public:
-  Face() : outer(), inner(), property() {}
+  Face() : outer(), inner(), property({}) {}
   explicit Face(nlohmann::json property)
       : outer(), inner(), property(std::move(property)) {}
   Face(Face<T> &&) = default;
@@ -20,7 +20,9 @@ class Face {
   Face<T> &operator=(Face<T> &&) = default;
   Face<T> &operator=(const Face<T> &) = default;
 
-  [[nodiscard]] const nlohmann::json &getProperty() const { return property; }
+  [[nodiscard]] nlohmann::json getProperty() const {
+      return property;
+  }
 
   const std::shared_ptr<HalfEdge<T>> &getOuter() const { return outer; }
 
@@ -36,6 +38,10 @@ class Face {
     return property.dump() < rhs.property.dump();
   }
 
+  void addProperty(nlohmann::json newProperty) {
+      if (!newProperty.is_null())
+        property.insert(newProperty.begin(), newProperty.end());
+  }
  private:
   nlohmann::json property;
   std::shared_ptr<HalfEdge<T>> outer;

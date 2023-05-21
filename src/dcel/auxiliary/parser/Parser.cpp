@@ -86,12 +86,12 @@ void Parser::genFace(
         const std::shared_ptr<DCEL<GeographicPoint>>& dcel,
         const std::vector<std::shared_ptr<HalfEdge<GeographicPoint>>>& edges,
         const json& properties) {
-auto face = std::make_shared<Face<GeographicPoint>>(properties);
-dcel->addFace(face);
+    auto face = std::make_shared<Face<GeographicPoint>>(properties);
+    dcel->addFace(face);
 
-face->setOuter(edges.at(0));
+    face->setOuter(edges.at(0));
 
-for (const auto& edge : edges) edge->setIncident(face);
+    for (const auto& edge : edges) edge->setIncident(face);
 }
 
 std::shared_ptr<DCEL<GeographicPoint>> Parser::parseJSONtoDCEL(
