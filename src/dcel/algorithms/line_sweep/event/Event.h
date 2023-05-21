@@ -6,10 +6,10 @@
 #define DCEL_EVENT_H
 
 #include <iostream>
-#include "../../dcel_substructures/HalfEdge.hpp"
-#include "../../dcel_substructures/Vertex.hpp"
-#include "../../auxiliary/Auxiliary.h"
-#include "../../auxiliary/geographic_point/GeographicPoint.h"
+#include "../../../dcel_substructures/HalfEdge.hpp"
+#include "../../../dcel_substructures/Vertex.hpp"
+#include "../../../auxiliary/Auxiliary.h"
+#include "../../../auxiliary/geographic_point/GeographicPoint.h"
 #include "../segment/Segment.h"
 
 // TODO: Should store the endpoint and have a function that returns a ordered value or overload operator

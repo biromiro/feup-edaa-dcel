@@ -5,10 +5,10 @@
 #include <queue>
 #include <vector>
 
-#include "../dcel_substructures/HalfEdge.hpp"
+#include "../../dcel_substructures/HalfEdge.hpp"
 #include "intersection/Intersection.h"
-#include "../auxiliary/Auxiliary.h"
-#include "../auxiliary/geographic_point/GeographicPoint.h"
+#include "../../auxiliary/Auxiliary.h"
+#include "../../auxiliary/geographic_point/GeographicPoint.h"
 #include "event/Event.h"
 #include "segment/Segment.h"
 #include <algorithm>

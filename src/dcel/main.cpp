@@ -2,7 +2,7 @@
 #include <iostream>
 
 #include "auxiliary/parser/Parser.h"
-#include "map_overlay/MapOverlay.h"
+#include "algorithms/map_overlay/MapOverlay.h"
 
 int main() {
     const auto dcel1 = Parser::parseJSONtoDCEL("test-map-10.json");

@@ -6,9 +6,9 @@
 #define DCEL_INTERSECTION_H
 
 #include <set>
-#include "../../dcel_substructures/Vertex.hpp"
-#include "../../dcel_substructures/HalfEdge.hpp"
-#include "../../auxiliary/geographic_point/GeographicPoint.h"
+#include "../../../dcel_substructures/Vertex.hpp"
+#include "../../../dcel_substructures/HalfEdge.hpp"
+#include "../../../auxiliary/geographic_point/GeographicPoint.h"
 
 class Intersection {
 public:
