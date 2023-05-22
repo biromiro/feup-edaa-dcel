@@ -104,10 +104,9 @@ std::shared_ptr<DCEL<GeographicPoint>> Parser::parseJSONtoDCEL(
   auto dcel = std::make_shared<DCEL<GeographicPoint>>();
 
   if (data["type"] != "FeatureCollection") {
-    const std::string error_msg =
-        "The provided json file does not have the expected type "
-        "'FeatureCollection'.";
-    throw std::invalid_argument(error_msg);
+    json data2;
+    data2.push_back(data);
+    data["features"] = data2;
   }
 
   // iterate through all vertices and create a vertex for each one

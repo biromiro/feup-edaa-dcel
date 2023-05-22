@@ -112,68 +112,70 @@ std::shared_ptr<DCEL<GeographicPoint>> MapOverlay::mergeDCELs(const std::shared_
 
             }
 
-            auto twinEdge = halfEdge->getTwin();
+            if (halfEdge) {
+                auto twinEdge = halfEdge->getTwin();
 
-            // create two new half edges
-            auto newEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(),
-                    newEdge2 = std::make_shared<HalfEdge<GeographicPoint>>();
+                // create two new half edges
+                auto newEdge1 = std::make_shared<HalfEdge<GeographicPoint>>(),
+                        newEdge2 = std::make_shared<HalfEdge<GeographicPoint>>();
 
-            newEdge1->setOrigin(vertexDCEL);
-            newEdge2->setOrigin(vertexDCEL);
+                newEdge1->setOrigin(vertexDCEL);
+                newEdge2->setOrigin(vertexDCEL);
 
-            halfEdge->setTwin(newEdge1);
-            twinEdge->setTwin(newEdge2);
+                halfEdge->setTwin(newEdge1);
+                twinEdge->setTwin(newEdge2);
 
-            newEdge1->setTwin(halfEdge);
-            newEdge2->setTwin(twinEdge);
+                newEdge1->setTwin(halfEdge);
+                newEdge2->setTwin(twinEdge);
 
-            resultingDCEL->addEdge(newEdge1);
-            resultingDCEL->addEdge(newEdge2);
+                resultingDCEL->addEdge(newEdge1);
+                resultingDCEL->addEdge(newEdge2);
 
-            newEdge1->setNext(twinEdge->getNext());
-            newEdge2->setNext(halfEdge->getNext());
+                newEdge1->setNext(twinEdge->getNext());
+                newEdge2->setNext(halfEdge->getNext());
 
-            twinEdge->getNext()->setPrev(newEdge1);
-            halfEdge->getNext()->setPrev(newEdge2);
+                twinEdge->getNext()->setPrev(newEdge1);
+                halfEdge->getNext()->setPrev(newEdge2);
 
-            newEdge1->setIncident(twinEdge->getIncident());
-            newEdge2->setIncident(halfEdge->getIncident());
+                newEdge1->setIncident(twinEdge->getIncident());
+                newEdge2->setIncident(halfEdge->getIncident());
 
-            cyclicOrder.push_back(newEdge1); cyclicOrder.push_back(newEdge2);
+                cyclicOrder.push_back(newEdge1); cyclicOrder.push_back(newEdge2);
 
-            cyclicOrderingOfEdges(intersectionPoint, cyclicOrder);
+                cyclicOrderingOfEdges(intersectionPoint, cyclicOrder);
 
-            int idx = std::distance(
-                    cyclicOrder.begin(),
-                    std::find(cyclicOrder.begin(), cyclicOrder.end(), halfEdge)
-            );
+                int idx = std::distance(
+                        cyclicOrder.begin(),
+                        std::find(cyclicOrder.begin(), cyclicOrder.end(), halfEdge)
+                );
 
-            cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx + 1) % cyclicOrder.size()));
-            cyclicOrder.at((idx + 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
+                cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx + 1) % cyclicOrder.size()));
+                cyclicOrder.at((idx + 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
 
-            idx = std::distance(
-                    cyclicOrder.begin(),
-                    std::find(cyclicOrder.begin(), cyclicOrder.end(), twinEdge)
-            );
+                idx = std::distance(
+                        cyclicOrder.begin(),
+                        std::find(cyclicOrder.begin(), cyclicOrder.end(), twinEdge)
+                );
 
-            cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx + 1) % cyclicOrder.size()));
-            cyclicOrder.at((idx + 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
+                cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx + 1) % cyclicOrder.size()));
+                cyclicOrder.at((idx + 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
 
-            idx = std::distance(
-                    cyclicOrder.begin(),
-                    std::find(cyclicOrder.begin(), cyclicOrder.end(), newEdge1)
-            );
+                idx = std::distance(
+                        cyclicOrder.begin(),
+                        std::find(cyclicOrder.begin(), cyclicOrder.end(), newEdge1)
+                );
 
-            cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx - 1) % cyclicOrder.size()));
-            cyclicOrder.at((idx - 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
+                cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx - 1) % cyclicOrder.size()));
+                cyclicOrder.at((idx - 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
 
-            idx = std::distance(
-                    cyclicOrder.begin(),
-                    std::find(cyclicOrder.begin(), cyclicOrder.end(), newEdge2)
-            );
+                idx = std::distance(
+                        cyclicOrder.begin(),
+                        std::find(cyclicOrder.begin(), cyclicOrder.end(), newEdge2)
+                );
 
-            cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx - 1) % cyclicOrder.size()));
-            cyclicOrder.at((idx - 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
+                cyclicOrder.at(idx)->setNext(cyclicOrder.at((idx - 1) % cyclicOrder.size()));
+                cyclicOrder.at((idx - 1) % cyclicOrder.size())->setPrev(cyclicOrder.at(idx));
+            }
 
         } else {
             auto vertex = std::make_shared<Vertex<GeographicPoint>>(intersectionPoint);

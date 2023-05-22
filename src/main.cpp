@@ -9,13 +9,22 @@
 #include "matplot/freestanding/plot.h"
 #include "visualization/Visualization.h"
 
-int main() {
-  const auto dcel1 = Parser::parseJSONtoDCEL("../data/test-map-1.json");
-  const auto dcel2 = Parser::parseJSONtoDCEL("../data/test-map-2.json");
-  // const auto dcel3 = Parser::parseJSONtoDCEL("test-map-12.json");
+#include <filesystem>
 
-  auto dcel = MapOverlay::overlayDCELs(dcel1, dcel2);
-  // dcel = MapOverlay::overlayDCELs(dcel, dcel3);
+using recursive_directory_iterator = std::filesystem::recursive_directory_iterator;
+
+int main() {
+    auto dcel = Parser::parseJSONtoDCEL("../data/usdata/nation/US.geojson");
+
+    for (const auto& dirEntry : recursive_directory_iterator("../data/usdata/region")) {
+        auto dcel1 = Parser::parseJSONtoDCEL(dirEntry.path().string());
+        dcel = MapOverlay::overlayDCELs(dcel, dcel1);
+    }
+
+    /*for (const auto& dirEntry : recursive_directory_iterator("../data/usdata/state")) {
+        auto dcel1 = Parser::parseJSONtoDCEL(dirEntry.path().string());
+        dcel = MapOverlay::overlayDCELs(dcel, dcel1);
+    }*/
 
   int i = 1;
   for (const auto& face : dcel->getFaces()) {
