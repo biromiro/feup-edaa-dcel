@@ -11,15 +11,18 @@
 #include <map>
 #include <memory>
 #include <random>
+#include <utility>
 
 Visualizer::Visualizer(std::shared_ptr<DCEL<GeographicPoint>> dcel) {
   this->dcel = dcel;
-  std::mt19937_64 rng;
+
+  this->rng = std::mt19937_64();
   // initialize the random number generator with time-dependent seed
   uint64_t timeSeed =
       std::chrono::high_resolution_clock::now().time_since_epoch().count();
   std::seed_seq ss{uint32_t(timeSeed & 0xffffffff), uint32_t(timeSeed >> 32)};
   rng.seed(ss);
+
   // initialize a uniform distribution between 0 and 1
   this->unif = std::uniform_real_distribution<double>(0, 1);
 }
@@ -28,7 +31,6 @@ float Visualizer::genRandom() { return unif(this->rng); }
 
 void Visualizer::plotDCEL(const bool hold) {
   auto colorMap = std::map<nlohmann::json, std::array<float, 4>>();
-  srand((unsigned)time(NULL));
 
   for (const auto& face : this->dcel->getFaces()) {
     if (face == dcel->getUnboundedFace()) continue;
@@ -64,6 +66,7 @@ void Visualizer::plotDCEL(const bool hold) {
       colors = colorPair->second;
     } else {
       colors = {genRandom(), genRandom(), genRandom(), 1.f};
+      colorMap.insert(std::make_pair(faceProperty, colors));
     }
 
     plot->color(colors);
